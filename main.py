@@ -41,21 +41,21 @@ if __name__ == '__main__':
     botList = []
     usaMarket = stockMaket.StockMarket(
         config.USAStockMarketConfig(), real_trade=False)
-    koreaMarket = stockMaket.StockMarket(
-        config.KoreaStockMarketConfig(), real_trade=False)
-    taiwanMarket = stockMaket.StockMarket(
-        config.TaiwanStockMarketConfig(), real_trade=False)
+    # koreaMarket = stockMaket.StockMarket(
+    #     config.KoreaStockMarketConfig(), real_trade=False)
+    # taiwanMarket = stockMaket.StockMarket(
+    #     config.TaiwanStockMarketConfig(), real_trade=False)
     
     botList.append(usaMarket)
-    botList.append(koreaMarket)
-    botList.append(taiwanMarket)
+  #  botList.append(koreaMarket)
+  #  botList.append(taiwanMarket)
 
     for bot in botList:
       bot.predic_stock()
       
-    while(True):
-        now = time.localtime()
-        for stockMarket in botList:
-            stockMarket.do()
+    # while(True):
+    #     now = time.localtime()
+    #     for stockMarket in botList:
+    #         stockMarket.do()
 
-        time.sleep(1)
+    #     time.sleep(1)

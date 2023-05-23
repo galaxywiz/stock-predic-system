@@ -7,13 +7,10 @@
 # pip install yfinance
 
 import pandas as pd 
-from pandas import Series, DataFrame
-from pandas_datareader import data as web
-import numpy as np
+from pandas import DataFrame
+
 import urllib.request
 from bs4 import BeautifulSoup
-import os
-import time
 import yfinance as yf
 
 from datetime import datetime
@@ -102,8 +99,8 @@ class StockCrawler:
         stockDf = DataFrame(columns = ("name", "ticker", "ranking"))
         for text in targetList:
             tokens = text.split(':')
-            row = DataFrame(data=[tokens], columns=["name", "ticker", "ranking"])
-            stockDf = stockDf.append(row)
+            new_row = {'name': tokens[0], 'ticker': tokens[1], 'ranking': tokens[2]}
+            stockDf.loc[-1] = new_row
             stockDf = stockDf.reset_index(drop=True)
         return stockDf
 
@@ -123,7 +120,8 @@ class USAStockCrawler(StockCrawler):
         nasdaqDf = pd.read_html("https://en.wikipedia.org/wiki/NASDAQ-100#External_links")[3]
         nasdaqDf = nasdaqDf.rename(columns={'Company': 'name', 'Ticker': 'ticker'})
 
-        stockDf = sp500.append(nasdaqDf)
+        sp500.loc[-1] = nasdaqDf
+        stockDf = sp500
         stockDf = stockDf.drop_duplicates(['ticker'], keep='last')
         # 시총 구하기
         marketCapList = []

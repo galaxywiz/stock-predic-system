@@ -5,7 +5,7 @@ from math import nan
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from sqlalchemy import null
+
 import os.path
 
 import torch
@@ -17,7 +17,7 @@ import stockCrawler as craw
 import stockData
 import logger
 
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda:0')
 
 class VanillaRNN(nn.Module):
     def __init__(self, input_size, hidden_size, sequence_length, num_layers):
@@ -39,7 +39,6 @@ class StockPredic:
         self.dtype_ = torch.float
         print(f'{device} is available')
         
-        self.model_ = null
         self.sequence_length = 5        # 5일 데이터로 6일째를 예측한다
 
         # 데이터 셋 관련인데, 어차피 사람이 만든 지표는 모르는거임, 최대한 노이즈 없는 데이터만 넣자

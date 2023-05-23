@@ -23,50 +23,55 @@ class Messenger:
 
 class LineBot(Messenger):
     def send_message(self, message):
-        try:
-            TARGET_URL = 'https://notify-api.line.me/api/notify' 
-            headers={'Authorization': 'Bearer ' + self.token_}  
-            data={'message': message}
-            response = requests.post(TARGET_URL, headers=headers, data=data)
+        print(message)
+        # try:
+        #     TARGET_URL = 'https://notify-api.line.me/api/notify' 
+        #     headers={'Authorization': 'Bearer ' + self.token_}  
+        #     data={'message': message}
+        #     response = requests.post(TARGET_URL, headers=headers, data=data)
 
-        except Exception as ex:
-            logger.error(traceback.format_exc())
+        # except Exception as ex:
+        #     logger.error(traceback.format_exc())
 
     def send_photo(self, image_path, message):
-        try:
-            TARGET_URL = 'https://notify-api.line.me/api/notify' 
-            headers={'Authorization': 'Bearer ' + self.token_}  
-            data={'message': message}
-            file = {'imageFile':open(image_path, 'rb')}
-            response = requests.post(TARGET_URL, headers=headers, files=file, data=data)
+        print(message)
+        # try:
+        #     TARGET_URL = 'https://notify-api.line.me/api/notify' 
+        #     headers={'Authorization': 'Bearer ' + self.token_}  
+        #     data={'message': message}
+        #     file = {'imageFile':open(image_path, 'rb')}
+        #     response = requests.post(TARGET_URL, headers=headers, files=file, data=data)
 
-        except Exception as ex:
-            logger.error(traceback.format_exc())
+        # except Exception as ex:
+        #     logger.error(traceback.format_exc())
 
 class TelegramBot(Messenger):
     def __init__(self, token, id, name):
         super().__init__(token, id, name)
 
-        self.messenger_bot_ = telepot.Bot(self.token_)
-        self.recvmsg_handler_reg(self.on_chat_message)
-        self.send_message("파이썬 " + name + " 서비스 시작")
+  #      self.messenger_bot_ = telepot.Bot(self.token_)
+  #      self.recvmsg_handler_reg(self.on_chat_message)
+  #      self.send_message("파이썬 " + name + " 서비스 시작")
 
     def recvmsg_handler_reg(self, func):
-        self.messenger_bot_.setWebhook()
-        MessageLoop(self.messenger_bot_, func).run_as_thread()
+ #       self.messenger_bot_.setWebhook()
+   #     MessageLoop(self.messenger_bot_, func).run_as_thread()
+        pass
 
     def send_message(self, message):
-        try:
-            self.messenger_bot_.sendMessage(self.id_, message)
-        except:
-            logger.error(traceback.format_exc())
+        print(message)
+        # try:
+        #     self.messenger_bot_.sendMessage(self.id_, message)
+        # except:
+        #     logger.error(traceback.format_exc())
 
     def send_photo(self, image, message):
-        try:
-            self.messenger_bot_.sendPhoto(
-                self.id_, photo=open(image, 'rb'), caption=message)
-        except:
-            logger.error(traceback.format_exc())
+        print(message)
+        # try:
+        #     self.messenger_bot_.sendPhoto(
+        #         self.id_, photo=open(image, 'rb'), caption=message)
+        # except:
+        #     logger.error(traceback.format_exc())
 
     #------------------------------------------------------------------#
     # 메시지 분석 해서 리턴

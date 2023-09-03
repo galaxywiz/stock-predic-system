@@ -1,30 +1,4 @@
-#----------------------------------------------#
-# 파이토치를 위해 아나콘다창에서 관리자 권한 인스톨해야 함
-#----------------------------------------------#
-# 설치시 노트북 환경에 따라
-# conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch -y
-# conda install pytorch torchvision torchaudio cpuonly -c pytorch -y
-
-# conda create --name env32bit --file anaconda-pkg.txt
-
-# 설치 실패시 아래 실행
-# conda install -c conda-forge ta-lib -y
-# conda install -c postelrich yahoo-finance
-# conda install -c anaconda pandas-datareader -y
-# conda install -c conda-forge python-telegram-bot -y
-# conda install scikit-learn -y
-
-# pip install telepot yahoo-finance
-# pip install logger
-# pip3 install -U scikit-learn scipy matplotlib
-# pip install yfinance
-# pip install cufflinks
-# pip install chart_studio
-# pip install plotly
-# pip install plotly==5.3.1
-# pip install -U kaleido
-# pip install kaleido==0.1.0post1
-# pip install apscheduler
+# pip install -r requirements.txt 
 #=== 아이디어 ===#
 # 1. 실제 주식 시장 처럼. 1일 1data 쌓는 형식으로 진행
 #    데이터 시작은 5년전 부터 시작,

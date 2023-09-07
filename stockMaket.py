@@ -230,6 +230,10 @@ class StockMarket:
     # 예측 봇을 돌리는 용도
     def predic_stock(self):
         # s&p 500 지수를 같이 참고로 예측
+        if self.config_.index_ticker_ not in self.stock_pool_:
+            logger.info("s&p 지수 로딩 실패")
+            return
+        
         stock_price_index = self.stock_pool_[self.config_.index_ticker_]
 
         recommand_buy = {}

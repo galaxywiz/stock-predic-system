@@ -59,8 +59,8 @@ class StockCrawler:
         endDate = datetime.now().strftime("%Y-%m-%d")
 
         # 웹으로 로딩에 실패를 자주 해서 아래와 같이 csv 다운받아 푸는걸로 처리
-        open = pd.to_datetime([strtdDate]).astype(int)[0]//10**9 
-        end = pd.to_datetime([endDate]).astype(int)[0]//10**9 
+        open = pd.to_datetime([strtdDate]).astype('int64').astype('int32')[0]//10**9 
+        end = pd.to_datetime([endDate]).astype('int64').astype('int32')[0]//10**9 
         try:
             url = 'https://query1.finance.yahoo.com/v7/finance/download/' + ticker + '?period1=' + str(open) + '&period2=' + str(end) + '&interval=1d&events=history'
             df = pd.read_csv(url)

@@ -6,7 +6,6 @@
 # 2. agent 는 특정 금액만 가지고 buy / sell 로 주식 매수 매입
 # 3. dqn 으로 agent 가 최적의 주식으로 돈을 가장 많이 버는 모델 만들어 보기
 
-import time
 import stockMaket
 import config
 # -----------------------------------------

@@ -26,7 +26,8 @@ class PrintChart:
             candle = sd.candle0()
             close_price = candle["Close"]
             per_close = close_price / 100
-            dateT = datetime.datetime.strptime(candle['Date'], date_fmt).date() + datetime.timedelta(days=1)
+            dateT = candle['Date'] + datetime.timedelta(days=1)
+            #dateT = datetime.datetime.strptime(candle['Date'], date_fmt).date() + datetime.timedelta(days=1)
             predic = sd.predic_price_[0]
 
             open_price = predic - per_close
@@ -40,9 +41,9 @@ class PrintChart:
             group = ['Date','Open','High','Low','Close']
             df = sd.chart_data_[group].copy()
             df = df.tail(data_len)
-            pdf = pd.DataFrame(data=[[dateT.strftime(date_fmt), open_price, predic + (per_close*2) , predic - (per_close*2), predic]], 
+            pdf = pd.DataFrame(data=[[dateT, open_price, predic + (per_close*2) , predic - (per_close*2), predic]], 
                             columns=group)
-            df = df.append(pdf)
+            df = pd.concat([df, pdf], ignore_index=True)
             fig = go.Figure(data=[go.Candlestick(x=df['Date'],
                                     open=df['Open'],
                                     high=df['High'],
@@ -88,6 +89,7 @@ class PrintChart:
                 os.remove(file_path)
             
             fig.write_image(file_path)
+            fig.clear(reset_layout=True)
 
             print("$ 차트 갱신 [%s] => [%s]" % (sd.name_, file_name))
             return file_path

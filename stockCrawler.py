@@ -58,20 +58,13 @@ class StockCrawler:
         strtdDate = oldDate.strftime("%Y-%m-%d")
         endDate = datetime.now().strftime("%Y-%m-%d")
 
-        # 웹으로 로딩에 실패를 자주 해서 아래와 같이 csv 다운받아 푸는걸로 처리
-        open = pd.to_datetime([strtdDate]).astype('int64').astype('int32')[0]//10**9 
-        end = pd.to_datetime([endDate]).astype('int64').astype('int32')[0]//10**9 
         try:
             df = yf.download(ticker, strtdDate, endDate)
-            # url = 'https://query1.finance.yahoo.com/v7/finance/download/' + ticker + '?period1=' + str(open) + '&period2=' + str(end) + '&interval=1d&events=history'
-            # df = pd.read_csv(url)
-            
             df.reset_index(inplace=True, drop=False)
             df['Date'] = pd.to_datetime(df.Date, format='%Y-%m-%d')
 
             features =['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
             df = df[features]
-            #print(df)
             return df
         except:
             print("[%s] Ticker load fail" % ticker)

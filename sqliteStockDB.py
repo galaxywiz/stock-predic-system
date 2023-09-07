@@ -9,14 +9,14 @@ class DayPriceDB(SqliteDB):
     def init_db(self, db_name, table_name):
         super().init_db(db_name, table_name)
 
-        self.table_struct_ = "Date DATETIME PRIMARY KEY, Open INT, High INT, Low INT, Close INT, Volume INT"
+        self.table_struct_ = "Date DATETIME PRIMARY KEY, Open INTEGER, High INTEGER, Low INTEGER, Close INTEGER, Volume INTEGER"
         self.columns_ = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
 
 class DayPriceFloatDB(SqliteDB):
     def init_db(self, db_name, table_name):
         super().init_db(db_name, table_name)
 
-        self.table_struct_ = "Date DATETIME PRIMARY KEY, Open Float, High Float, Low Float, Close Float, Volume INT"
+        self.table_struct_ = "Date DATETIME PRIMARY KEY, Open FLOAT, High FLOAT, Low FLOAT, Close FLOAT, Volume INTEGER"
         self.columns_ = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
 
 #----------------------------------------------------------#

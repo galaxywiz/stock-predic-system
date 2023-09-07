@@ -90,22 +90,24 @@ class SqliteDB:
         table_name = self._table_name(ticker)
         with self.conn_:
             try:
-                cur = self.conn_.cursor()
-                columns = ""
-                value = ""
-                for col in self.columns_:
-                    if len(columns) == 0:
-                        columns = "'%s'" % col
-                    else:
-                        columns = "%s, '%s'" % (columns, col)
+                # cur = self.conn_.cursor()
+                # columns = ""
+                # value = ""
+                # for col in self.columns_:
+                #     if len(columns) == 0:
+                #         columns = "'%s'" % col
+                #     else:
+                #         columns = "%s, '%s'" % (columns, col)
 
-                    if len(value) == 0:
-                        value = "?"
-                    else:
-                        value = "%s, ?" % (value)
+                #     if len(value) == 0:
+                #         value = "?"
+                #     else:
+                #         value = "%s, ?" % (value)
 
-                sql = "INSERT OR REPLACE INTO \'%s\' (%s) VALUES(%s)" % (table_name, columns, value)
-                cur.executemany(sql, dataframe.values)    
+                # sql = "INSERT OR REPLACE INTO \'%s\' (%s) VALUES(%s)" % (table_name, columns, value)
+                list_of_rows = dataframe.values.tolist()
+                # cur.executemany(sql, list_of_rows)    
+                dataframe.to_sql(table_name, self.conn_, if_exists="replace", index = False, dtype={"Date": "TIMESTAMP"})
                 self.conn_.commit()
             except:
                 logger.error(traceback.format_exc())
@@ -128,16 +130,16 @@ class SqliteDB:
                 else:
                     sql = "SELECT %s FROM \'%s\' WHERE Date >= \'%s\' ORDER BY %s" % (columns, table_name, openTime, orderBy)
      
-                df = pd.read_sql(sql, self.conn_, index_col=None)
+                df = pd.read_sql(sql, self.conn_, index_col=None, parse_dates=["Date"])
                 length = len(df) 
                 if length == 0:
                     return False, None
                 
                 if length > last_limit:
                     df = df[length - last_limit:]
-
+                
             except:
- #               logger.error(traceback.format_exc())
+                logger.error(traceback.format_exc())
                 return False, None
 
         return True, df    

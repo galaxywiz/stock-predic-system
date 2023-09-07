@@ -77,16 +77,8 @@ class StockMarket:
     #----------------------------------------------------------#
     # db 에 데이터 저장 하고 로딩!
     def __get_stock_info_from_web_to_db(self, name, ticker):
-        load_days = 10
-        # DB에 데이터가 없으면 테이블을 만듬
-        sel = self.config_.day_price_db_.get_table(ticker)
-        if sel == 0:
-            return None
-        elif sel == 1:  # 신규 생성 했으면
-            load_days = 365 * 5  #5 년치
-
-        # 크롤러에게 ticker 넘기고 넷 데이터 긁어오기
-        #time_frame = self.config_.time_frame_
+        load_days = 365 * 5  #5 년치
+        
         df = self.config_.crawler_.get_stock_data(ticker, load_days)
         if df is None:
             logger.error("! 주식 [%s] 의 크롤링 실패" % (name))
@@ -114,7 +106,7 @@ class StockMarket:
                 return None
         else:
             date_str = df.iloc[-1]['Date']
-            candle_date = datetime.strptime(date_str, self.DATE_FMT)
+            candle_date = date_str # datetime.strptime(date_str, self.DATE_FMT)
             elpe = 0
             if self.DATE_FMT == "%Y-%m-%d %H:%M:%S":
                 elpe = 100
@@ -123,16 +115,20 @@ class StockMarket:
             if elpe > self.REFRESH_DAY:
                 self.__get_stock_info_from_web_to_db(name, ticker)
                 ret, df = self.__load_from_db(ticker)
+                
                 if ret == False:
                     logger.error("[%s][%s] load fail2" % (name, ticker))
                     return None
+                
+                print(df)
+      
         #30일전 데이터가 있는지 체크
         if len(df) < 35:
             logger.error("[%s][%s] load fail. because data too short" % (name, ticker))
             return None
 
         prev_date_str = df.iloc[-15]['Date']
-        candle_date = datetime.strptime(prev_date_str, self.DATE_FMT)
+        candle_date = prev_date_str #datetime.strptime(prev_date_str, self.DATE_FMT)
         elpe = (now - candle_date).days
         if elpe > 30:
             logger.error("%s 데이터 로딩 실패, db 에서 데이터 삭제" % name)

@@ -60,12 +60,15 @@ class StockCrawler:
 
         try:
             df = yf.download(ticker, strtdDate, endDate)
-            df.reset_index(inplace=True, drop=False)
-            df['Date'] = pd.to_datetime(df.Date, format='%Y-%m-%d')
+            if not df.empty:
+                df.reset_index(inplace=True, drop=False)
+                df['Date'] = pd.to_datetime(df.Date, format='%Y-%m-%d')
 
-            features =['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
-            df = df[features]
-            return df
+                features =['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+                df = df[features]
+                return df
+            return None
+        
         except:
             print("[%s] Ticker load fail" % ticker)
             return None
@@ -154,24 +157,19 @@ class USAStockCrawler(StockCrawler):
 #----------------------------------------------------------#
 ### 구글이 안되니 아후에서 긁자.
 class KoreaStockCrawler(StockCrawler):
-    def __get_ticker(self, ticker):
-        if ticker[0] == '^':
-            return ticker
-            
-        # 코스피는 KS, 코스닥은 KQ
-        t = ticker + ".KS"
-        try:
-            web.get_quote_yahoo(t)['marketCap']
-            return t
-        except:
-            return ticker +".KQ"
-
     def get_stock_data(self, ticker, loadDays):
         rowTicker = ticker
-
         try:
-            ticker = self.__get_ticker(ticker)
-            df = super().get_stock_data(ticker, loadDays)
+            # 코스피는 KS, 코스닥은 KQ, 지수는 앞에 ^
+            if ticker[0] == '^':
+                t = ticker                
+            else:
+                t = ticker + ".KS"            
+
+            df = super().get_stock_data(t, loadDays)
+            if df == None:
+                t = ticker + ".KQ"            
+                df = super().get_stock_data(t, loadDays)
             return df
 
         except:
@@ -227,11 +225,12 @@ class TaiwanStockCrawler(StockCrawler):
             return ticker
             
         t = ticker + ".TW"
-        try:
-            web.get_quote_yahoo(t)['marketCap']
-            return t
-        except:
-            return ticker
+        return t
+        # try:
+        #     web.get_quote_yahoo(t)['marketCap']
+        #     return t
+        # except:
+        #     return ticker
 
     def get_stock_data(self, ticker, loadDays):
         rowTicker = ticker

@@ -89,8 +89,8 @@ class PrintChart:
                 os.remove(file_path)
             
             fig.write_image(file_path)
-            fig.clear(reset_layout=True)
-
+            del fig
+            
             print("$ 차트 갱신 [%s] => [%s]" % (sd.name_, file_name))
             return file_path
 

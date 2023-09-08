@@ -85,10 +85,21 @@ class StockMarket:
             return None
 
         # 데이터 저장    
-        self.config_.day_price_db_.save(ticker, df)
+        db = self.config_.day_price_db_
+        db.save(ticker, df)
 
+    def __check_db_exist(self, ticker):
+        db = self.config_.day_price_db_
+        
+        ret = db.check_table(ticker)
+        if ret == False:
+            return False
+        return True
+    
     def __load_from_db(self, ticker):
-        ret, df = self.config_.day_price_db_.load(ticker)
+        db = self.config_.day_price_db_
+        
+        ret, df = db.load(ticker)
         if ret == False:
             return False, None
 
@@ -97,31 +108,18 @@ class StockMarket:
     ## db 에서 데이터 봐서 있으면 말고 없으면 로딩
     def __load_stock_data(self, name, ticker, market_cap_ranking):  
         now = datetime.now()
+        # 일단 web에서 데이터 조회 및 저장
+        self.__get_stock_info_from_web_to_db(name, ticker)
+        
+        if self.__check_db_exist(ticker) == False:
+            logger.error("[%s][%s] load fail from web." % (name, ticker))
+            return None             
+        
         ret, df = self.__load_from_db(ticker)
         if ret == False:
-            self.__get_stock_info_from_web_to_db(name, ticker)
-            ret, df = self.__load_from_db(ticker)
-            if ret == False:
-                logger.error("[%s][%s] load fail1" % (name, ticker))
-                return None
-        else:
-            date_str = df.iloc[-1]['Date']
-            candle_date = date_str # datetime.strptime(date_str, self.DATE_FMT)
-            elpe = 0
-            if self.DATE_FMT == "%Y-%m-%d %H:%M:%S":
-                elpe = 100
-            else:
-                elpe = (now - candle_date).days
-            if elpe > self.REFRESH_DAY:
-                self.__get_stock_info_from_web_to_db(name, ticker)
-                ret, df = self.__load_from_db(ticker)
-                
-                if ret == False:
-                    logger.error("[%s][%s] load fail2" % (name, ticker))
-                    return None
-                
-                print(df)
-      
+            logger.error("[%s][%s] load fail. from db" % (name, ticker))
+            return None
+              
         #30일전 데이터가 있는지 체크
         if len(df) < 35:
             logger.error("[%s][%s] load fail. because data too short" % (name, ticker))
@@ -143,6 +141,7 @@ class StockMarket:
         sd.market_cap_ranking_ = int(market_cap_ranking)
 
         logger.info("[%s] data 로딩완료. last date [%s]" % (sd.name_, sd.now_candle_time()))
+        print(df)
 
     def get_stocks_list(self, limit = -1):
         self.stock_pool_.clear()
@@ -235,7 +234,7 @@ class StockMarket:
         recommand_buy = {}
         recommand_sell = {}
         for sd in self.stock_pool_.values():
-            model_name = self.config_.name_
+            model_name = self.config_.name + '_' + sd.name_
             mm_predic = sp.StockPredic(sd, stock_price_index, model_name)
             predic = mm_predic.predic()   
             sd.predic_price_ = predic
@@ -265,6 +264,10 @@ class StockMarket:
             log += l
 
         self.send_message(log)
+
+    #----------------------------------------------------------#
+    def check_strategy(self):
+        pass
     #----------------------------------------------------------#
     # 거래량 많은 순서대로 의미 있는 수급량만 거래
     def _vol_desc_stocks(self):

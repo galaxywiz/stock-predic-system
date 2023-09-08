@@ -18,8 +18,6 @@ class SqliteDB:
         self.conn_ = sqlite3.connect(dir + db_name)
         self.db_name_ = db_name
         self.table_name_ = table_name
-     #   self.table_struct_ = "Date DATETIME PRIMARY KEY, open INT, high INT, low INT, close INT, vol INT"
-     #   self.columns_ = ['Date', 'open', 'high', 'low', 'close', 'vol']
 
     def _table_name(self, ticker):
         ticker = ticker.replace("=","_")
@@ -90,23 +88,7 @@ class SqliteDB:
         table_name = self._table_name(ticker)
         with self.conn_:
             try:
-                # cur = self.conn_.cursor()
-                # columns = ""
-                # value = ""
-                # for col in self.columns_:
-                #     if len(columns) == 0:
-                #         columns = "'%s'" % col
-                #     else:
-                #         columns = "%s, '%s'" % (columns, col)
-
-                #     if len(value) == 0:
-                #         value = "?"
-                #     else:
-                #         value = "%s, ?" % (value)
-
-                # sql = "INSERT OR REPLACE INTO \'%s\' (%s) VALUES(%s)" % (table_name, columns, value)
-                list_of_rows = dataframe.values.tolist()
-                # cur.executemany(sql, list_of_rows)    
+            #    list_of_rows = dataframe.values.tolist()
                 dataframe.to_sql(table_name, self.conn_, if_exists="replace", index = False, dtype={"Date": "TIMESTAMP"})
                 self.conn_.commit()
             except:

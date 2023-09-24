@@ -59,6 +59,17 @@ class PredicStockDo(StockDo):
 
         sm.send_message(log)        
     
-
+# 전략을 로딩, 조합해서 필터링 하는 역활
+# 5선화음, 이평선등 기본만 구현해보기
 class StrategyStockDo(PredicStockDo):
-    pass
+    def do(self):
+        self.__strategy()
+        self.__print()
+
+    ## 전락 돌려보기
+    def __strategy(self):
+        pass
+
+    # 전략에 괜찮은거 프린트
+    def __print(self):
+        pass

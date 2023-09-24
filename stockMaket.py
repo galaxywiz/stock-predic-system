@@ -20,7 +20,7 @@ from stockData import StockData, BuyState, StockType
 
 import stockPredic as sp
 from printChart import PrintChart
-from stockDo import PredicStockDo
+from stockDo import PredicStockDo, StrategyStockDo
 
 class StockMarket:
     REFRESH_DAY = 1
@@ -269,8 +269,9 @@ class StockMarket:
 
     #----------------------------------------------------------#
     def check_strategy(self):
-
-        pass
+        strategy = StrategyStockDo(self)
+        strategy.do()
+        
     #----------------------------------------------------------#
     # 거래량 많은 순서대로 의미 있는 수급량만 거래
     def _vol_desc_stocks(self):

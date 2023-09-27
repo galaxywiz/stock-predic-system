@@ -81,18 +81,18 @@ class StockPredic:
                         num_layers=num_layers).to(device)
        
         epoch = 200
-        self.__studyModel(train_loader, epoch)
+        self.__studyModel(model_name, train_loader, epoch)
 
         predic, actual = self.predic_price(train_loader, test_loader, self.df_[self.data_part_y_][self.sequence_length:])
         return predic, actual
 
-    def predic(self):
+    def predic(self, common_model = False):
         self.__nomalizing()
         split = int(self.df_.shape[0] * 0.7)
         train_loader, test_loader, input_size = self.__prepareTrainData(split)
-        predic, actual = self.do_study(self.common_model_file_, train_loader, test_loader, input_size)
-        if np.isnan(predic):
-            logger.info("! [%s] common model 예측 실패" % self.stock_data_.name_)
+        if common_model:
+            predic, actual = self.do_study(self.common_model_file_, train_loader, test_loader, input_size)
+        else:
             predic, actual = self.do_study(self.self_model_file_, train_loader, test_loader, input_size, new_model=True)
 
         arrow = '대기'
@@ -149,7 +149,7 @@ class StockPredic:
         test_loader = torch.utils.data.DataLoader(dataset=test, batch_size=batch_size, shuffle=False)
         return train_loader, test_loader, x_seq.size(2)
 
-    def __studyModel(self, train_loader, epoch = 200):
+    def __studyModel(self, model_name, train_loader, epoch = 200):
         #regression 문제이기 때문에 loss function 을 MSE 로 두었다. 학습률은 0.001, 에폭은 200으로 설정하였다.
         criterion = nn.MSELoss()
 
@@ -178,13 +178,10 @@ class StockPredic:
             if epoch % 100 == 0:
                 print('[epoch: %d] loss: %.4f'%(epoch, running_loss/n))
         
-        try:
-            if not os.path.exists(self.model_dir_):
-                os.makedirs(self.model_dir_)
-            torch.save(self.model_, self.common_model_file_)
-        except:
-            logger.error("%s/%s 모델 저장 에러" % (self.common_model_file_, self.model_))
-
+        if not os.path.exists(self.model_dir_):
+            os.makedirs(self.model_dir_)
+        torch.save(self.model_, model_name)
+        
         plt.figure(figsize=(20,10))
         plt.plot(loss_graph)
         if not os.path.exists(self.study_dir_):

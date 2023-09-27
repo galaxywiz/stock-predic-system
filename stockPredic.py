@@ -51,7 +51,7 @@ class StockPredic:
         # 공용 변수
         self.model_dir_ = ("./mm_files/%s" % stock_market)
         self.common_model_file_ = ("%s/stock_predic_model.pt" % (self.model_dir_))
-        self.self_model_file_ = ("%s/stock_predic_model_%s.pt" % (self.model_dir_, stock_data.name_))
+        self.self_model_file_ = ("%s/stock_predic_model_%s.pt" % (self.model_dir_, stock_data.ticker_))
         self.study_dir_ = ("./matplot/%s" % stock_market)
 
         # 주식 데이터 갖고오기

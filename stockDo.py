@@ -29,7 +29,7 @@ class PredicStockDo(StockDo):
         recommand_buy = {}
         recommand_sell = {}
         for sd in sm.stock_pool_.values():
-            model_name = sm.config_.name_ + '_' + sd.name_
+            model_name = sm.config_.name_ + '_' + sd.ticker_
             mm_predic = sp.StockPredic(sd, stock_price_index, model_name)
             predic = mm_predic.predic()   
             sd.predic_price_ = predic

@@ -24,8 +24,8 @@ if __name__ == '__main__':
     # botList.append(taiwanMarket)
 
     for bot in botList:
-    #    bot.check_strategy()
-        bot.predic_stock()
+        bot.check_strategy()
+    #    bot.predic_stock()
       
     # while(True):
     #     now = time.localtime()

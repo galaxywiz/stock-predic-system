@@ -73,9 +73,9 @@ class StrategyStockDo(PredicStockDo):
     def __strategy(self):
         sm = self.stock_market_
         for sd in sm.stock_pool_.values():
-            for s in self.strategy_:
-                st = s(sd)
-                st.print_chart()
+            for template in self.strategy_:
+                strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
+                strategy.print_chart()
         
 
     # 전략에 괜찮은거 프린트

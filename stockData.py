@@ -186,3 +186,14 @@ class StockData:
        
         self.chart_data_["atr"] = ta._ta_lib.ATR(arr_high, arr_low, arr_close, 14)
         
+        #5선화음 
+        high = self.chart_data_['High']
+        low = self.chart_data_['Low']
+        period = 2
+        mid = talib.SMA((high + low) / 2, timeperiod=period)
+        
+        self.chart_data_['line1'] = mid - 0.2 * (high - low)
+        self.chart_data_['line2'] = mid - 0.4 * (high - low)
+        self.chart_data_['line3'] = mid - 0.6 * (high - low)
+        self.chart_data_['line4'] = mid - 0.8 * (high - low)
+        self.chart_data_['line5'] = mid - 1 * (high - low)

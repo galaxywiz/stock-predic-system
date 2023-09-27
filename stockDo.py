@@ -4,6 +4,7 @@ from printChart import PrintChart
 import util as u
 from stockData import StockData, BuyState, StockType
 import stockMaket
+from stockStrategy import FiveLineStockStrategy
 
 class StockDo:
     def __init__(self, stock_market):
@@ -68,7 +69,13 @@ class StrategyStockDo(PredicStockDo):
 
     ## 전락 돌려보기
     def __strategy(self):
-        pass
+        self.strategy_ = (FiveLineStockStrategy)
+        sm = self.stock_market_
+        for sd in sm.stock_pool_.values():
+            for s in self.strategy_:
+                s(sd)
+                s.print_chart()
+        
 
     # 전략에 괜찮은거 프린트
     def __print(self):

@@ -178,10 +178,13 @@ class StockPredic:
             if epoch % 100 == 0:
                 print('[epoch: %d] loss: %.4f'%(epoch, running_loss/n))
         
-        if not os.path.exists(self.model_dir_):
-            os.makedirs(self.model_dir_)
-        torch.save(self.model_, self.common_model_file_)
-        
+        try:
+            if not os.path.exists(self.model_dir_):
+                os.makedirs(self.model_dir_)
+            torch.save(self.model_, self.common_model_file_)
+        except:
+            logger.error("%s/%s 모델 저장 에러" % (self.common_model_file_, self.model_))
+
         plt.figure(figsize=(20,10))
         plt.plot(loss_graph)
         if not os.path.exists(self.study_dir_):

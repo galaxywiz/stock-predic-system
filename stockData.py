@@ -15,6 +15,7 @@ import os
 import talib
 import talib.abstract as ta
 from talib import MA_Type
+from sklearn import linear_model
 
 import pandas as pd 
 import numpy as np
@@ -185,15 +186,24 @@ class StockData:
         self.chart_data_["plusDM"]  = ta._ta_lib.PLUS_DM(arr_high, arr_low, 14)
        
         self.chart_data_["atr"] = ta._ta_lib.ATR(arr_high, arr_low, arr_close, 14)
-        
-        #5선화음 
-        high = self.chart_data_['High']
-        low = self.chart_data_['Low']
-        period = 2
-        mid = talib.SMA((high + low) / 2, timeperiod=period)
-        
-        self.chart_data_['line1'] = mid - 0.2 * (high - low)
-        self.chart_data_['line2'] = mid - 0.4 * (high - low)
-        self.chart_data_['line3'] = mid - 0.6 * (high - low)
-        self.chart_data_['line4'] = mid - 0.8 * (high - low)
-        self.chart_data_['line5'] = mid - 1 * (high - low)
+
+        reg = linear_model.LinearRegression()
+        self.chart_data_['itx'] =[i  for i in range(1,len(list(self.chart_data_['Close']))+1)]
+        # x , y
+        reg.fit (self.chart_data_['itx'].values.reshape(-1, 1),self.chart_data_['Close'])
+    #    print(reg.coef_)
+    #    print(reg.intercept_)
+        self.chart_data_['coef'] = reg.coef_[0]
+        self.chart_data_['intercept'] = reg.intercept_
+        # y = c+x*b = 截距+x*斜率
+        #趨勢線
+        self.chart_data_['priceTL'] = self.chart_data_['intercept']+self.chart_data_['itx']*self.chart_data_['coef']
+        #誤差
+        self.chart_data_['y-TL'] = self.chart_data_['Close']-self.chart_data_['priceTL']
+        # 標準差
+        self.chart_data_['SD'] = self.chart_data_['y-TL'].std()
+        # 分別計算上下 1個和2個標準差
+        self.chart_data_['TL-2SD'] = self.chart_data_['priceTL']-2*self.chart_data_['SD']
+        self.chart_data_['TL-SD'] = self.chart_data_['priceTL']-self.chart_data_['SD']
+        self.chart_data_['TL+2SD'] = self.chart_data_['priceTL']+2*self.chart_data_['SD']
+        self.chart_data_['TL+SD'] = self.chart_data_['priceTL']+self.chart_data_['SD']

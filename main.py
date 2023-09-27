@@ -1,4 +1,5 @@
 # pip install -r requirements.txt 
+# 갱신시 pip freeze > requirements.txt
 #=== 아이디어 ===#
 # 1. 실제 주식 시장 처럼. 1일 1data 쌓는 형식으로 진행
 #    데이터 시작은 5년전 부터 시작,
@@ -24,8 +25,8 @@ if __name__ == '__main__':
     # botList.append(taiwanMarket)
 
     for bot in botList:
-    #    bot.check_strategy()
-        bot.predic_stock()
+        bot.check_strategy()
+    #    bot.predic_stock()
       
     # while(True):
     #     now = time.localtime()

@@ -63,18 +63,19 @@ class PredicStockDo(StockDo):
 # 전략을 로딩, 조합해서 필터링 하는 역활
 # 5선화음, 이평선등 기본만 구현해보기
 class StrategyStockDo(PredicStockDo):
+    strategy_ = [FiveLineStockStrategy]
+
     def do(self):
         self.__strategy()
         self.__print()
 
     ## 전락 돌려보기
     def __strategy(self):
-        self.strategy_ = (FiveLineStockStrategy)
         sm = self.stock_market_
         for sd in sm.stock_pool_.values():
             for s in self.strategy_:
-                s(sd)
-                s.print_chart()
+                st = s(sd)
+                st.print_chart()
         
 
     # 전략에 괜찮은거 프린트

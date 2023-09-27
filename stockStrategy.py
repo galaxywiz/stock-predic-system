@@ -1,6 +1,11 @@
 import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import stockData
+
+
+import numpy as np
+import plotly.graph_objects as go
+import time
 
 class StockStrategy:
     def __init__(self, sd):
@@ -28,23 +33,41 @@ class FiveLineStockStrategy(StockStrategy):
         return super().ask_price()
     
     def print_chart(self):
-        df = self.stock_data_
-        plt.plot(df['Date'], df['High'])
-        plt.plot(df['Date'], df['Low'])
-        plt.plot(df['Date'], df['line1'])
-        plt.plot(df['Date'], df['line2'])
-        plt.plot(df['Date'], df['line3'])
-        plt.plot(df['Date'], df['line4'])
-        plt.plot(df['Date'], df['line5'])
+        sd = self.stock_data_
+        # 데이터 프레임을 최근 120일로 슬라이싱합니다.
+        df = sd.chart_data_.tail(220)
+        
+        
 
-        # 지지와 저항선을 표시합니다.
-        for i in range(1, 6):
-            plt.axhline(i, color='black', linestyle='--')
+        fig = go.Figure()
+        for i in ['Close','priceTL','TL-2SD', 'TL-SD',
+            'TL+SD', 'TL+2SD']:
+            fig.add_trace(
+            go.Scatter(
+                x=df['Date'],
+                y=df[i],
+                name=i
+            ))
 
-        # 레이블을 추가합니다.
-        plt.xlabel('Date')
-        plt.ylabel('Price')
+        fig.update_layout(
+        xaxis_title="x Axis Title",
+            yaxis_title="y Axis Title",
+            font=dict(
+                family="Courier New, monospace",
+                size=18,
+                color="#7f7f7f"
+            ),
+            title={'text': "Plot Title",'xanchor': 'center','y':0.995,
+                'x':0.5,
+                'yanchor': 'top'},
+        )
+        print("$ 차트 준비 [%s]" % (sd.name_))
+        # 그래프 준비
+        fig.show()
 
-        # 차트를 보여줍니다.
-        plt.show()
-        plt.savefig(df.name_+".png")
+        save_file = "chart/%s.png" % sd.name_
+        fig.write_image(save_file)
+        del fig
+            
+        print("$ 차트 갱신 [%s] => [%s]" % (sd.name_, save_file))
+        

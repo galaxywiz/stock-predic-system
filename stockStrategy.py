@@ -39,8 +39,8 @@ class FiveLineStockStrategy(StockStrategy):
     def print_chart(self):
         sd = self.stock_data_
         # 데이터 프레임을 최근 120일로 슬라이싱합니다.
-        df = sd.chart_data_ #.tail(120)               
-        
+        df = sd.chart_data_ #tail(120)               
+       # print(df)
         plt.close()
         # 한글 폰트 설정
         plt.rc('font', family='Malgun Gothic')   # 나눔 폰트를 사용하려면 해당 폰트 이름을 지정

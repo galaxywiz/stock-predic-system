@@ -16,6 +16,8 @@ import yfinance as yf
 from datetime import datetime
 from datetime import timedelta
 
+import traceback
+import logger
 #----------------------------------------------------------#
 # 주식 목록 갖고오기 (상위)
 class StockCrawler:
@@ -167,12 +169,13 @@ class KoreaStockCrawler(StockCrawler):
                 t = ticker + ".KS"            
 
             df = super().get_stock_data(t, loadDays)
-            if df == None:
+            if df is None:
                 t = ticker + ".KQ"            
                 df = super().get_stock_data(t, loadDays)
             return df
 
         except:
+            logger.error(traceback.format_exc())
             return self.get_korea_stock_data_from_naver(rowTicker, loadDays)
    
     def get_stock_list(self, limit, debug = False):

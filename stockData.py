@@ -116,6 +116,15 @@ class StockData:
     def predic_candle(self):
         pass
 
+    #캔들
+    def candle(self, idx):
+        row_cnt = self.chart_data_.shape[0]
+        if row_cnt == 0:
+            return None
+        if idx < len(self.chart_data_):
+            return self.chart_data_.iloc[idx]
+        return None
+    
     # 지금 캔들(갱신될 수 있음)
     def candle0(self):
         row_cnt = self.chart_data_.shape[0]

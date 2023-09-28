@@ -16,11 +16,11 @@ class StockStrategy:
         self.char_dir_ = char_dir
 
     # 매수 가격인가?
-    def bid_price(self):
+    def bid_price(self, idx):
         pass
 
     # 매도 가격인가?
-    def ask_price(self):
+    def ask_price(self, idx):
         pass
     
     # 차트 출력해서 맞는지 검증
@@ -28,13 +28,21 @@ class StockStrategy:
         pass
 
 class FiveLineStockStrategy(StockStrategy):
-    def bid_price(self):
-        
-        return super().bid_price()
+    def bid_price(self, idx):
+        candle = self.stock_data_.candle(idx)
+        close = candle['Close']
+        TL2SD = candle["TL-2SD"]
+        if close < TL2SD:
+            return True
+        return False
     
-    def ask_price(self):
-
-        return super().ask_price()
+    def ask_price(self, idx):
+        candle = self.stock_data_.candle(idx)
+        close = candle['Close']
+        TL2SD = candle["TL+2SD"]
+        if close > TL2SD:
+            return True
+        return False
     
     def print_chart(self):
         sd = self.stock_data_
@@ -64,40 +72,6 @@ class FiveLineStockStrategy(StockStrategy):
         save_file = "%s/%s.png" % (dir, sd.name_)
         plt.savefig(save_file)
         plt.close()
-
-        # 그래프 표시
-        #plt.show()
-
-        # fig = go.Figure()
-        # for i in ['Close','priceTL','TL-2SD', 'TL-SD',
-        #     'TL+SD', 'TL+2SD']:
-        #     fig.add_trace(
-        #     go.Scatter(
-        #         x=df['Date'],
-        #         y=df[i],
-        #         name=i
-        #     ))
-
-        # fig.update_layout(
-        # xaxis_title="x Axis Title",
-        #     yaxis_title="y Axis Title",
-        #     font=dict(
-        #         family="Courier New, monospace",
-        #         size=18,
-        #         color="#7f7f7f"
-        #     ),
-        #     title={'text': "Plot Title",'xanchor': 'center','y':0.995,
-        #         'x':0.5,
-        #         'yanchor': 'top'},
-        # )
-        # print("$ 차트 준비 [%s]" % (sd.name_))
-        # # 그래프 준비
-        # time.sleep(0.1)
-
-        # save_file = "./chart/%s.png" % sd.name_
-        # fig.write_image(save_file)
-        # ##, format="png", plotlyjs="https://cdn.plot.ly/plotly-latest.min.js")
-        # del fig
-            
+      
         print("$ 차트 갱신 [%s] => [%s]" % (sd.name_, save_file))
         

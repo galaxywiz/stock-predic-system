@@ -2,7 +2,6 @@
 #https://data-science-hi.tistory.com/190
 
 from math import nan
-import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
@@ -13,8 +12,6 @@ import torch.nn as nn
 import torch.optim as optim
 
 import matplotlib.pyplot as plt
-import stockCrawler as craw
-import stockData
 import logger
 
 device = torch.device('cuda:0')

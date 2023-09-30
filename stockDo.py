@@ -2,7 +2,7 @@ import logger
 import stockPredic as sp
 from printChart import PrintChart
 import util as u
-from stockData import StockData, BuyState, StockType
+import stockData
 import stockMaket
 from stockStrategy import FiveLineStockStrategy
 
@@ -66,9 +66,9 @@ class StrategyStockDo(PredicStockDo):
     strategy_ = [FiveLineStockStrategy]
 
     def do(self):
-        self.__calcWinRate()
-        self.__calcKellyFormula()        
-        self.__backTesting()
+        # self.__calcWinRate()
+        # self.__calcKellyFormula()        
+        # self.__backTesting()
         self.__print()
 
     # 전략을 투입할시 승률을 구한다

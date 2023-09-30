@@ -10,14 +10,9 @@
 # 결국 vscode 에서 아나콘다의 파이썬으로 pip install ta-lib 하니까 됨.
 
 from enum import Enum
-import os
-
-import talib
 import talib.abstract as ta
 from talib import MA_Type
 from sklearn import linear_model
-
-import pandas as pd 
 import numpy as np
 
 import util

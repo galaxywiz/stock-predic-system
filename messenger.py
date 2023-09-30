@@ -1,9 +1,7 @@
 # https://xenostudy.tistory.com/505
 # pip install telepot
 import telepot
-from telepot.loop import MessageLoop
 import traceback
-import requests
 
 import logger
 

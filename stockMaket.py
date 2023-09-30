@@ -1,10 +1,5 @@
 #주식 차트 실습
 #https://chancoding.tistory.com/117?category=846070
-from enum import Enum
-from xmlrpc.client import DateTime
-import pandas as pd 
-from pandas import Series, DataFrame
-import numpy as np
 from datetime import datetime
 from datetime import timedelta
 import os
@@ -13,13 +8,7 @@ import glob
 import locale
 import logger
 
-import util as u
-from stockCrawler import USAStockCrawler, FutureCrawler, KoreaStockCrawler
-from sqliteStockDB import DayPriceDB, DayPriceFloatDB, DayPreDB
-from stockData import StockData, BuyState, StockType
-
-import stockPredic as sp
-from printChart import PrintChart
+from stockData import StockData
 from stockDo import PredicStockDo, StrategyStockDo
 
 class StockMarket:

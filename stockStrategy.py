@@ -1,14 +1,6 @@
 import os.path
-import pandas as pd
 import matplotlib.pyplot as plt
 import stockData
-
-
-import numpy as np
-import plotly.graph_objects as go
-import plotly.io
-import time
-
 
 class StockStrategy:
     def __init__(self, stock_data, char_dir):

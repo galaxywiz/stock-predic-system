@@ -1,8 +1,3 @@
-import pandas as pd 
-from datetime import datetime
-from datetime import timedelta
-
-from stockData import StockData
 from sqliteDB import SqliteDB
 
 class DayPriceDB(SqliteDB):

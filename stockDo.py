@@ -66,18 +66,28 @@ class StrategyStockDo(PredicStockDo):
     strategy_ = [FiveLineStockStrategy]
 
     def do(self):
-        self.__strategy()
+        self.__calcWinRate()
+        self.__calcKellyFormula()        
+        self.__backTesting()
         self.__print()
 
-    ## 전락 돌려보기
-    def __strategy(self):
+    # 전략을 투입할시 승률을 구한다
+    def __calcWinRate():
+        pass
+    
+    # 해당 전략으로 최적의 배팅 비율을 구한다
+    def __calcKellyFormula():
+        pass
+
+    # 백테스팅을 해본다.
+    def __backTesting():
+        pass
+
+    ## 결과 출력하기
+    def __print(self):
         sm = self.stock_market_
         for sd in sm.stock_pool_.values():
             for template in self.strategy_:
                 strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
                 strategy.print_chart()
-        
-
-    # 전략에 괜찮은거 프린트
-    def __print(self):
-        pass
+ 

@@ -13,16 +13,22 @@ import config
 # 메인 함수 시작
 if __name__ == '__main__':
     botList = []
-    usaMarket = stockMaket.StockMarket(
-        config.USAStockMarketConfig(), real_trade=False)
-    #koreaMarket = stockMaket.StockMarket(
-    #    config.KoreaStockMarketConfig(), real_trade=False)
-    # taiwanMarket = stockMaket.StockMarket(
-    #     config.TaiwanStockMarketConfig(), real_trade=False)
-    
-    botList.append(usaMarket)
-    #botList.append(koreaMarket)
-    #botList.append(taiwanMarket)
+    test = True
+    if test:
+        usaMarket = stockMaket.StockMarket(
+            config.USAStockMarketConfig(), real_trade=False)
+        botList.append(usaMarket)
+    else:
+        usaMarket = stockMaket.StockMarket(
+            config.USAStockMarketConfig(), real_trade=False)
+        koreaMarket = stockMaket.StockMarket(
+            config.KoreaStockMarketConfig(), real_trade=False)
+        taiwanMarket = stockMaket.StockMarket(
+            config.TaiwanStockMarketConfig(), real_trade=False)
+        
+        botList.append(usaMarket)
+        botList.append(koreaMarket)
+        botList.append(taiwanMarket)
 
     for bot in botList:
         bot.check_strategy()

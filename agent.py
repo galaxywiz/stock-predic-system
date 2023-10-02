@@ -5,7 +5,7 @@ from pandas import Series, DataFrame
 import numpy as np
 from datetime import datetime, timedelta
 
-from stockData import StockData, BuyState
+from stockData import StockData, TradingState
 
 class Agent:
     def __init__(self, account):

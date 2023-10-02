@@ -4,7 +4,7 @@ import time
 
 from stockCrawler import USAStockCrawler, FutureCrawler, KoreaStockCrawler, TaiwanStockCrawler
 from sqliteStockDB import DayPriceDB, DayPriceFloatDB, DayPreDB
-from stockData import StockData, BuyState, StockType
+from stockData import StockData, TradingState, StockType
 from messenger import TelegramBot, LineBot
 # 봇 설정
 class StockMarketConfig:

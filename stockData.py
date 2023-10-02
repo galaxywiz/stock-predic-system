@@ -17,7 +17,7 @@ import numpy as np
 
 import util
 
-class BuyState (Enum):
+class TradingState (Enum):
     STAY = 0
     BUY = 1
     SELL = 2
@@ -40,7 +40,7 @@ class StockData:
         self.buy_time_ = None
         # 매매 전략
         self.strategy_ = None
-        self.strategy_action_ = BuyState.STAY
+        self.strategy_action_ = TradingState.STAY
         
         # 예측 영역
         self.predic_price_ = 0        # 과거기록 누적. 이후 얼마나 잘 맞추고 있는지도 보여줌

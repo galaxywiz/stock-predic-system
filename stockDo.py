@@ -66,41 +66,21 @@ class StrategyStockDo(PredicStockDo):
     strategy_ = [FiveLineStockStrategy, BollengerStockStrategy, MacdStockStrategy]
 
     def do(self):
-        self.__calcWinRate()
-        # self.__calcKellyFormula()        
-        # self.__backTesting()
+        self.__back_test()
         self.__print()
 
     # 전략을 투입할시 승률을 구한다
-    def __calcWinRate(self):
+    def __back_test(self):
         sm = self.stock_market_
         for sd in sm.stock_pool_.values():
             for template in self.strategy_:
                 strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
                 trading_statement = strategy.back_test()
-                trading_statement.log()
+                kelly_rate = trading_statement.optimal_bet_ratio()
+                if kelly_rate > 0:
+                    trading_statement = strategy.back_test(balance=1000000, kelly_rate=kelly_rate)
+                    trading_statement.log()
                 
-    
-    # 해당 전략으로 최적의 배팅 비율을 구한다
-    def __kelly_criterion(self, p, a, b):
-        # 패배 확률 계산
-        q = 1 - p
-        # 최적 투자 비중 계산
-        f = (p * (b + 1) - 1) / (a * b)
-        # 결과 반환
-        return f
-
-    # # 예시 입력값
-    # p = 0.6 # 승리 확률 60%
-    # a = 0.1 # 패배시 손실률 10%
-    # b = 0.2 # 승리시 수익률 20%
-
-    # # 켈리공식 계산 함수 호출
-    # f = kelly_criterion(p, a, b)
-
-    # 백테스팅을 해본다.
-    def __backTesting(self):
-        pass
 
     ## 결과 출력하기
     def __print(self):

@@ -2,11 +2,21 @@ import stockData
 import logger
 
 class Transaction:
-    def set_bid(self, candle, amount = 1):
+    #매수
+    def set_bid(self, candle, batting_money = 0):
         self.bid_candle_ = candle
         self.ask_candle_ = None
-        self.amount_ = amount
+        if batting_money == 0:
+            self.amount_ = 1
+        else:
+            bid_price = self.bid_candle_["Close"]
+            amount = int(batting_money / bid_price)
+            if amount <= 0:
+                return 0
+            self.amount_ = amount
 
+        return self.amount_
+    #매도
     def set_ask(self, candle):
         self.ask_candle_ = candle
 
@@ -15,7 +25,11 @@ class Transaction:
         ask_price = self.ask_candle_["Close"]
         profit = ask_price - bid_price
         return profit * self.amount_
-
+    
+    def calc_final_money(self):
+        ask_price = self.ask_candle_["Close"]
+        return ask_price * self.amount_
+    
     def calc_profit_rate(self):
         bid_price = self.bid_candle_["Close"]
         ask_price = self.ask_candle_["Close"]
@@ -23,10 +37,12 @@ class Transaction:
         return profit_rate
 
 class TradingStatement:
-    def __init__(self, sd, trading):
+    def __init__(self, sd, trading, balance, kelly_rate):
         self.stock_data_ = sd
         self.transctions_ = []
-        self.trading = trading
+        self.balance_ = balance
+        self.trading_ = trading
+        self.kelly_rate_ = kelly_rate
         self.trading_name_ = trading.__class__.__name__
 
     def add_transaction(self, tran):
@@ -84,15 +100,27 @@ class TradingStatement:
         rate = rate / trading_count
         return rate
     
+    def set_balance(self, balance):
+        self.balance_ = balance
+    
     # 해당 전략으로 최적의 배팅 비율을 구한다
-    def __kelly_criterion(self, p, a, b):
-        # 패배 확률 계산
+    def __kelly_criterion(self, p, profit, loss):
+        if loss == 0:
+            logger.info("켈리공식으로 손실율 0으론 계산 불가")
+            return 0
+        
         q = 1 - p
-        # 최적 투자 비중 계산
-        f = (p * (b + 1) - 1) / (a * b)
-        # 결과 반환
-        return f
-       
+        b = profit / loss  # 이길 때 얻는 이익과 지면 손실 비율의 비율
+        f_star = (p * b - q) / b
+        return f_star
+    
+    def optimal_bet_ratio(self):
+        win_rate = self.win_rating()
+        profit_rate = self.profit_rate()
+        lose_rate = self.lose_rate()
+        f_star = self.__kelly_criterion(win_rate, profit_rate, lose_rate)
+        return f_star
+
     def log(self):
         trading_count = self.total_trading_count() 
         if trading_count <= 0:
@@ -102,18 +130,21 @@ class TradingStatement:
         win_rate = self.win_rating()
         profit_rate = self.profit_rate()
         lose_rate = self.lose_rate()
-        k = self.__kelly_criterion(win_rate, lose_rate, profit_rate)
 
         logger.info("! [%s][%s] 의 백테스팅 리포트" % (self.stock_data_.name_, self.trading_name_))
         for tran in self.transctions_:
             bid_candle = tran.bid_candle_
             ask_candle = tran.ask_candle_
-            logger.info("- 매수[%s]:[%2.2f], 수량[%d], 매수 금액[%2.2f]" % (bid_candle["Date"], bid_candle["Close"], tran.amount_, bid_candle["Close"] * tran.amount_))
-            logger.info("- 매도[%s]:[%2.2f], 수량[%d], 매도 금액[%2.2f]" % (ask_candle["Date"], ask_candle["Close"], tran.amount_, ask_candle["Close"] * tran.amount_))
+            logger.info("- 매수[%s]:[%2.2f], 수량[%d], 매수 금액[%2.2f]"
+                        % (bid_candle["Date"], bid_candle["Close"], tran.amount_, bid_candle["Close"] * tran.amount_))
+            logger.info("- 매도[%s]:[%2.2f], 수량[%d], 매도 금액[%2.2f]" 
+                        % (ask_candle["Date"], ask_candle["Close"], tran.amount_, ask_candle["Close"] * tran.amount_))
             logger.info("- 이익[%2.2f]" % (tran.calc_profit()))
 
-        logger.info("+ [%s][%s] 의 승률 %2.2f %%, 거래수 %d, 총이익 [%2.2f]" % (self.stock_data_.name_, self.trading_name_, win_rate * 100, trading_count, self.total_prtofit())) 
-        logger.info("+ [%2.2f]%% 승률, [%2.2f]%% 수익율, [%2.2f]%% 손실율, [%2.2f]%%, 최적 배팅 비율" % (
-            win_rate, profit_rate, lose_rate, k
-        ))
+        logger.info("+ [%s][%s] 의 승률 %2.2f %%, 거래수 %d, 총이익 [%2.2f]" 
+                    % (self.stock_data_.name_, self.trading_name_, win_rate * 100, trading_count, self.total_prtofit())) 
+        logger.info("+ 승률[%2.2f]%%, 수익율[%2.2f]%%, 손실율[%2.2f]%% , 최적 배팅 비율[%2.2f]%%"
+                    % (win_rate, profit_rate, lose_rate, self.kelly_rate_))
+        logger.info("! [{0}][{1}] 전략 [{2:.2f}]% 비율 배팅 시뮬시 => 총 금액[{3:,.2f}]"
+                     .format(self.stock_data_.name_, self.trading_name_, self.kelly_rate_, self.balance_))
         

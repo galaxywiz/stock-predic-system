@@ -64,6 +64,7 @@ class PredicStockDo(StockDo):
 # 5선화음, 이평선등 기본만 구현해보기
 class StrategyStockDo(PredicStockDo):
     strategy_ = [FiveLineStockStrategy, BollengerStockStrategy, MacdStockStrategy]
+    trading_history_ = []
 
     def do(self):
         self.__back_test()
@@ -77,9 +78,10 @@ class StrategyStockDo(PredicStockDo):
                 strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
                 trading_statement = strategy.back_test()
                 kelly_rate = trading_statement.optimal_bet_ratio()
-                if kelly_rate > 0:
+                if 0 < kelly_rate and kelly_rate < 1:
                     trading_statement = strategy.back_test(balance=1000000, kelly_rate=kelly_rate)
-                    trading_statement.log()
+                    self.trading_history_.append(trading_statement)
+                #    trading_statement.log()
                 
 
     ## 결과 출력하기
@@ -89,4 +91,7 @@ class StrategyStockDo(PredicStockDo):
             for template in self.strategy_:
                 strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
                 strategy.print_chart()
+
+        for trading_statement in self.trading_history_:
+            trading_statement.log() 
  

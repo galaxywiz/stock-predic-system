@@ -11,7 +11,15 @@ class StockStrategy:
 
     # 전략 만들기
     def make_indicators(self, idx):
-        pass
+        sd = self.stock_data_
+        lenth = len(sd.chart_data_)
+        if idx > 0:
+            if lenth < idx:
+                return None
+            df = sd.chart_data_[:idx]  
+        else:
+            df = sd.chart_data_
+        return df
 
     # 매수 가격인가?
     def bid_price(self, candle):
@@ -23,7 +31,7 @@ class StockStrategy:
     
     def back_test(self, balance = 0):
         df = self.stock_data_.chart_data_
-        tranding_statement = TradingStatement(self.stock_data_)
+        trading_statement = TradingStatement(self.stock_data_, trading_name=self.__class__.__name__)
         transaction = Transaction()
         
         state = stockData.TradingState.BUY
@@ -44,12 +52,11 @@ class StockStrategy:
                 if self.ask_price(candle):
                     state = stockData.TradingState.BUY
                     transaction.set_ask(candle)
-                    tranding_statement.add_transaction(transaction)
+                    trading_statement.add_transaction(transaction)
 
                     transaction = Transaction()
                     
-        tranding_statement.log()
-        return tranding_statement
+        return trading_statement
         
 
     # 차트 출력해서 맞는지 검증

@@ -169,16 +169,16 @@ class StockData:
         self.chart_data_["wma100"] = ta._ta_lib.WMA(arr_close, 100)
         self.chart_data_["wma200"] = ta._ta_lib.WMA(arr_close, 200)
 
-        macd, signal, osi = ta._ta_lib.MACD(arr_close, fastperiod=12, slowperiod=26, signalperiod=9)
-        self.chart_data_["MACD"] = macd
-        self.chart_data_["MACDSignal"] = signal
-        self.chart_data_["MACDOsi"] = osi
+        # macd, signal, osi = ta._ta_lib.MACD(arr_close, fastperiod=12, slowperiod=26, signalperiod=9)
+        # self.chart_data_["MACD"] = macd
+        # self.chart_data_["MACDSignal"] = signal
+        # self.chart_data_["MACDOsi"] = osi
   
         #볼린저 계산
-        upper, middle, low = ta._ta_lib.BBANDS(arr_close, 20, 2, 2, matype=MA_Type.SMA)
-        self.chart_data_["bbandUp"] = upper
-        self.chart_data_["bbandMid"] = middle
-        self.chart_data_["bbandLow"] = low
+        # upper, middle, low = ta._ta_lib.BBANDS(arr_close, 20, 2, 2, matype=MA_Type.SMA)
+        # self.chart_data_["bbandUp"] = upper
+        # self.chart_data_["bbandMid"] = middle
+        # self.chart_data_["bbandLow"] = low
 
         # 기타 자주 사용되는 것들
         self.chart_data_["rsi"] = ta._ta_lib.RSI(arr_close, 14)
@@ -191,26 +191,26 @@ class StockData:
        
         self.chart_data_["atr"] = ta._ta_lib.ATR(arr_high, arr_low, arr_close, 14)
 
-        reg = linear_model.LinearRegression()
-        self.chart_data_['itx'] =[i for i in range(1,len(list(self.chart_data_['Close'])) + 1)]
-        # x , y
-        reg.fit (self.chart_data_['itx'].values.reshape(-1, 1),self.chart_data_['Close'])
-        self.chart_data_['coef'] = reg.coef_[0]
-        self.chart_data_['intercept'] = reg.intercept_
-        # y = c+x*b = 截距+x*斜率
-        #추세선
-        self.chart_data_['priceTL'] = self.chart_data_['intercept'] + (self.chart_data_['itx'] * self.chart_data_['coef'])
-        # 오차
-        self.chart_data_['y-TL'] = self.chart_data_['Close'] - self.chart_data_['priceTL']
-        # 표준편차
-        self.chart_data_['SD'] = self.chart_data_['y-TL'].std()
+        # reg = linear_model.LinearRegression()
+        # self.chart_data_['itx'] =[i for i in range(1,len(list(self.chart_data_['Close'])) + 1)]
+        # # x , y
+        # reg.fit (self.chart_data_['itx'].values.reshape(-1, 1),self.chart_data_['Close'])
+        # self.chart_data_['coef'] = reg.coef_[0]
+        # self.chart_data_['intercept'] = reg.intercept_
+        # # y = c+x*b = 截距+x*斜率
+        # #추세선
+        # self.chart_data_['priceTL'] = self.chart_data_['intercept'] + (self.chart_data_['itx'] * self.chart_data_['coef'])
+        # # 오차
+        # self.chart_data_['y-TL'] = self.chart_data_['Close'] - self.chart_data_['priceTL']
+        # # 표준편차
+        # self.chart_data_['SD'] = self.chart_data_['y-TL'].std()
         
-        #매우 낙관적인 선: 추세선은 위의 2 표준편차이며, 추가 상승 확률은 2.2%입니다(아래 그림의 노란색 선).
-        #낙관선: 추세선 위 1 표준편차, 추가 상승 확률 15.8%(아래 그림의 연한 파란색 선)
-        #추세선: 일정 기간 동안의 평균 가격을 연결하는 직선(아래 그림의 분홍색 선).
-        #비관적 선: 추세선은 1 표준편차 이하이며, 추가 하락 확률은 15.8%(아래 그림의 진한 파란색 선)입니다.
-        #극도로 비관적인 선 : 추세선은 아래 2표준편차이고, 추가 하락 확률은 2.2%이다(아래 그림 녹색선).
-        self.chart_data_['TL-2SD'] = self.chart_data_['priceTL'] - (2 * self.chart_data_['SD'])
-        self.chart_data_['TL-SD'] = self.chart_data_['priceTL'] - (self.chart_data_['SD'])
-        self.chart_data_['TL+2SD'] = self.chart_data_['priceTL'] + (2 * self.chart_data_['SD'])
-        self.chart_data_['TL+SD'] = self.chart_data_['priceTL'] + (self.chart_data_['SD'])
+        # #매우 낙관적인 선: 추세선은 위의 2 표준편차이며, 추가 상승 확률은 2.2%입니다(아래 그림의 노란색 선).
+        # #낙관선: 추세선 위 1 표준편차, 추가 상승 확률 15.8%(아래 그림의 연한 파란색 선)
+        # #추세선: 일정 기간 동안의 평균 가격을 연결하는 직선(아래 그림의 분홍색 선).
+        # #비관적 선: 추세선은 1 표준편차 이하이며, 추가 하락 확률은 15.8%(아래 그림의 진한 파란색 선)입니다.
+        # #극도로 비관적인 선 : 추세선은 아래 2표준편차이고, 추가 하락 확률은 2.2%이다(아래 그림 녹색선).
+        # self.chart_data_['TL-2SD'] = self.chart_data_['priceTL'] - (2 * self.chart_data_['SD'])
+        # self.chart_data_['TL-SD'] = self.chart_data_['priceTL'] - (self.chart_data_['SD'])
+        # self.chart_data_['TL+2SD'] = self.chart_data_['priceTL'] + (2 * self.chart_data_['SD'])
+        # self.chart_data_['TL+SD'] = self.chart_data_['priceTL'] + (self.chart_data_['SD'])

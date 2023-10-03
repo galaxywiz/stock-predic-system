@@ -3,6 +3,8 @@ import stockPredic as sp
 from printChart import PrintChart
 import util as u
 from strategyFiveLine import FiveLineStockStrategy
+from strategyBollenger import BollengerStockStrategy
+from strategyMACD import MacdStockStrategy
 
 class StockDo:
     def __init__(self, stock_market):
@@ -61,7 +63,7 @@ class PredicStockDo(StockDo):
 # 전략을 로딩, 조합해서 필터링 하는 역활
 # 5선화음, 이평선등 기본만 구현해보기
 class StrategyStockDo(PredicStockDo):
-    strategy_ = [FiveLineStockStrategy]
+    strategy_ = [FiveLineStockStrategy, BollengerStockStrategy, MacdStockStrategy]
 
     def do(self):
         self.__calcWinRate()
@@ -75,7 +77,8 @@ class StrategyStockDo(PredicStockDo):
         for sd in sm.stock_pool_.values():
             for template in self.strategy_:
                 strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
-                win_rate = strategy.back_test()
+                trading_statement = strategy.back_test()
+                trading_statement.log()
                 
     
     # 해당 전략으로 최적의 배팅 비율을 구한다

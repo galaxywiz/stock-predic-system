@@ -5,33 +5,15 @@ import talib.abstract as ta
 from talib import MA_Type
 from sklearn import linear_model
 import numpy as np
-import stockStrategy
+from stockStrategy import StockStrategy
 
-class FiveLineStockStrategy(stockStrategy.StockStrategy):
-    def bid_price(self, candle):
-        close = candle['Close']
-        TL2SD = candle["TL-2SD"]
-        if close < TL2SD:
-            return True
-        return False
-    
-    def ask_price(self, candle):
-        close = candle['Close']
-        TL2SD = candle["TL+2SD"]
-        if close > TL2SD:
-            return True
-        return False
-    
+class FiveLineStockStrategy(StockStrategy):
     def make_indicators(self, idx = 0):
-        sd = self.stock_data_
-        lenth = len(sd.chart_data_)
-        if idx > 0:
-            if lenth < idx:
-                return None
-            df = sd.chart_data_[:idx]  
-        else:
-            df = sd.chart_data_
-            
+        df_copy = super().make_indicators(idx)
+        if df_copy is None:
+            return None
+        df = df_copy.copy()
+
         reg = linear_model.LinearRegression()
         df.loc[:, 'itx'] =[i for i in range(1,len(list(df['Close'])) + 1)]
         # x , y
@@ -57,6 +39,20 @@ class FiveLineStockStrategy(stockStrategy.StockStrategy):
         df.loc[:, 'TL+2SD'] = df['priceTL'] + (2 * df['SD'])
         return df
     
+    def bid_price(self, candle):
+        close = candle['Close']
+        TL2SD = candle['TL-2SD']
+        if close <= TL2SD:
+            return True
+        return False
+    
+    def ask_price(self, candle):
+        close = candle['Close']
+        TL2SD = candle['TL+2SD']
+        if close >= TL2SD:
+            return True
+        return False
+    
     def print_chart(self):
         sd = self.stock_data_
         df = self.make_indicators()
@@ -77,7 +73,7 @@ class FiveLineStockStrategy(stockStrategy.StockStrategy):
         plt.legend()
 
         # 이미지 저장
-        dir = self.char_dir_
+        dir = self.char_dir_ + "/five"
         if not os.path.exists(dir):
             os.makedirs(dir)
         save_file = "%s/%s.png" % (dir, sd.name_)

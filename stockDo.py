@@ -2,9 +2,7 @@ import logger
 import stockPredic as sp
 from printChart import PrintChart
 import util as u
-import stockData
-import stockMaket
-from stockStrategy import FiveLineStockStrategy
+from strategyFiveLine import FiveLineStockStrategy
 
 class StockDo:
     def __init__(self, stock_market):

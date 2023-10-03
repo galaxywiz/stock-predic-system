@@ -31,7 +31,7 @@ class StockStrategy:
     
     def back_test(self, balance = 0):
         df = self.stock_data_.chart_data_
-        trading_statement = TradingStatement(self.stock_data_, trading_name=self.__class__.__name__)
+        trading_statement = TradingStatement(self.stock_data_, trading=self)
         transaction = Transaction()
         
         state = stockData.TradingState.BUY

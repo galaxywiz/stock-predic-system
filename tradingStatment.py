@@ -135,16 +135,16 @@ class TradingStatement:
         for tran in self.transctions_:
             bid_candle = tran.bid_candle_
             ask_candle = tran.ask_candle_
-            logger.info("- 매수[%s]:[%2.2f], 수량[%d], 매수 금액[%2.2f]"
-                        % (bid_candle["Date"], bid_candle["Close"], tran.amount_, bid_candle["Close"] * tran.amount_))
-            logger.info("- 매도[%s]:[%2.2f], 수량[%d], 매도 금액[%2.2f]" 
-                        % (ask_candle["Date"], ask_candle["Close"], tran.amount_, ask_candle["Close"] * tran.amount_))
-            logger.info("- 이익[%2.2f]" % (tran.calc_profit()))
+            logger.info("- 매수[{0}]:[{1}], 수량[{2}], 매수 금액[{3:,.2f}]"
+                        .format(bid_candle["Date"], bid_candle["Close"], tran.amount_, bid_candle["Close"] * tran.amount_))
+            logger.info("- 매도[{0}]:[{1}], 수량[{2}], 매도 금액[{3:,.2f}]" 
+                        .format(ask_candle["Date"], ask_candle["Close"], tran.amount_, ask_candle["Close"] * tran.amount_))
+            logger.info("=> 이익[{0:,.2f}]".format(tran.calc_profit()))
 
-        logger.info("+ [%s][%s] 의 승률 %2.2f %%, 거래수 %d, 총이익 [%2.2f]" 
-                    % (self.stock_data_.name_, self.trading_name_, win_rate * 100, trading_count, self.total_prtofit())) 
-        logger.info("+ 승률[%2.2f]%%, 수익율[%2.2f]%%, 손실율[%2.2f]%% , 최적 배팅 비율[%2.2f]%%"
-                    % (win_rate, profit_rate, lose_rate, self.kelly_rate_))
+        logger.info("+ [{0}][{1}] 의 승률 {2:.2f}, 거래수 {3}, 총이익 {4:,.2f}]" 
+                    .format(self.stock_data_.name_, self.trading_name_, win_rate * 100, trading_count, self.total_prtofit())) 
+        logger.info("+ 승률[{0}]%, 수익율[{1:.2f}]%, 손실율[{2:.2f}]% , 최적 배팅 비율[{3:.2f}]%"
+                    .format(win_rate, profit_rate, lose_rate, self.kelly_rate_))
         logger.info("! [{0}][{1}] 전략 [{2:.2f}]% 비율 배팅 시뮬시 => 총 금액[{3:,.2f}]"
-                     .format(self.stock_data_.name_, self.trading_name_, self.kelly_rate_, self.balance_))
+                    .format(self.stock_data_.name_, self.trading_name_, self.kelly_rate_, self.balance_))
         

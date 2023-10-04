@@ -140,11 +140,11 @@ class TradingStatement:
         logger.info("+ [{0}][{1}] 전략 [{2:.2f}]% 비율 배팅 시뮬시 => 총 금액[{3:,.2f}]"
                     .format(self.stock_data_.name_, self.trading_name_, self.kelly_rate_ * 100, self.balance_))
         #엑셀에 뽑을 수 있도록 
-        logger.info("매수일, 매수종가, 수량, 매수가격, 매도일, 매도종가, 수량, 매도가격, 이익")
+        logger.info("|매수일|매수종가|수량|매수가격|매도일|매도종가|수량|매도가격|이익")
         for tran in self.transctions_:
             bid_candle = tran.bid_candle_
             ask_candle = tran.ask_candle_
-            logger.info("{0}, {1:,.2f}, {2}, {3:,.2f}, {4}, {5:,.2f}, {6}, {7:,.2f}, {8:,.2f}"
+            logger.info("|{0}|{1:,.2f}|{2}|{3:,.2f}|{4}|{5:,.2f}|{6}|{7:,.2f}|{8:,.2f}"
                         .format(bid_candle["Date"], bid_candle["Close"], tran.amount_, bid_candle["Close"] * tran.amount_
                             , ask_candle["Date"], ask_candle["Close"], tran.amount_, ask_candle["Close"] * tran.amount_
                             , tran.calc_profit()))

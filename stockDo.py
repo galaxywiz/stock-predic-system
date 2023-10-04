@@ -67,22 +67,33 @@ class StrategyStockDo(PredicStockDo):
     trading_history_ = []
 
     def do(self):
-        self.__back_test()
+        self.__evaluation()
         self.__print()
 
+    def back_test(self, strategy_template, sd, balance):
+        strategy = strategy_template(stock_data=sd
+                                     , char_dir=self.stock_market_.chart_dir_)
+        trading_statement = strategy.back_test(transaction_simul=False)
+        kelly_rate = trading_statement.optimal_bet_ratio()
+        if 0 < kelly_rate and kelly_rate < 1:
+            trading_statement = strategy.back_test(transaction_simul=True
+                                                  , balance=balance
+                                                  , kelly_rate=kelly_rate)
+            return trading_statement
+        
+        return None
+    
     # 전략을 투입할시 승률을 구한다
-    def __back_test(self):
+    def __evaluation(self):
         sm = self.stock_market_
+        balance = sm.config_.balance_
         for sd in sm.stock_pool_.values():
             for template in self.strategy_:
-                strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
-                trading_statement = strategy.back_test()
-                kelly_rate = trading_statement.optimal_bet_ratio()
-                if 0 < kelly_rate and kelly_rate < 1:
-                    trading_statement = strategy.back_test(balance=1000000, kelly_rate=kelly_rate)
+                trading_statement = self.back_test(strategy_template=template
+                                                   ,sd = sd
+                                                   ,balance=balance)
+                if trading_statement is not None:
                     self.trading_history_.append(trading_statement)
-                #    trading_statement.log()
-                
 
     ## 결과 출력하기
     def __print(self):

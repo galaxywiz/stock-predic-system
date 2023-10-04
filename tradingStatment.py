@@ -131,20 +131,22 @@ class TradingStatement:
         profit_rate = self.profit_rate()
         lose_rate = self.lose_rate()
 
-        logger.info("! [%s][%s] 의 백테스팅 리포트" % (self.stock_data_.name_, self.trading_name_))
+        logger.info("! [%s][%s] 의 백테스팅 리포트" % (self.stock_data_.name_, self.trading_name_))        
+        #요약 정보
+        logger.info("+ [{0}][{1}] 의 승률 {2:.2f}, 거래수 {3}, 총이익 {4:,.2f}]" 
+                    .format(self.stock_data_.name_, self.trading_name_, win_rate * 100, trading_count, self.total_prtofit())) 
+        logger.info("+ 수익율[{0:.2f}]%, 손실율[{1:.2f}]% , 최적 배팅 비율[{2:.2f}]%"
+                    .format(profit_rate * 100, lose_rate * 100, self.kelly_rate_ *100))
+        logger.info("+ [{0}][{1}] 전략 [{2:.2f}]% 비율 배팅 시뮬시 => 총 금액[{3:,.2f}]"
+                    .format(self.stock_data_.name_, self.trading_name_, self.kelly_rate_ * 100, self.balance_))
+        #엑셀에 뽑을 수 있도록 
+        logger.info("매수일, 매수종가, 수량, 매수가격, 매도일, 매도종가, 수량, 매도가격, 이익")
         for tran in self.transctions_:
             bid_candle = tran.bid_candle_
             ask_candle = tran.ask_candle_
-            logger.info("- 매수[{0}]:[{1}], 수량[{2}], 매수 금액[{3:,.2f}]"
-                        .format(bid_candle["Date"], bid_candle["Close"], tran.amount_, bid_candle["Close"] * tran.amount_))
-            logger.info("- 매도[{0}]:[{1}], 수량[{2}], 매도 금액[{3:,.2f}]" 
-                        .format(ask_candle["Date"], ask_candle["Close"], tran.amount_, ask_candle["Close"] * tran.amount_))
-            logger.info("=> 이익[{0:,.2f}]".format(tran.calc_profit()))
+            logger.info("{0}, {1:,.2f}, {2}, {3:,.2f}, {4}, {5:,.2f}, {6}, {7:,.2f}, {8:,.2f}"
+                        .format(bid_candle["Date"], bid_candle["Close"], tran.amount_, bid_candle["Close"] * tran.amount_
+                            , ask_candle["Date"], ask_candle["Close"], tran.amount_, ask_candle["Close"] * tran.amount_
+                            , tran.calc_profit()))
 
-        logger.info("+ [{0}][{1}] 의 승률 {2:.2f}, 거래수 {3}, 총이익 {4:,.2f}]" 
-                    .format(self.stock_data_.name_, self.trading_name_, win_rate * 100, trading_count, self.total_prtofit())) 
-        logger.info("+ 승률[{0}]%, 수익율[{1:.2f}]%, 손실율[{2:.2f}]% , 최적 배팅 비율[{3:.2f}]%"
-                    .format(win_rate, profit_rate, lose_rate, self.kelly_rate_))
-        logger.info("! [{0}][{1}] 전략 [{2:.2f}]% 비율 배팅 시뮬시 => 총 금액[{3:,.2f}]"
-                    .format(self.stock_data_.name_, self.trading_name_, self.kelly_rate_, self.balance_))
         

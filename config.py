@@ -38,6 +38,7 @@ class USAStockMarketConfig(StockMarketConfig):
         self.char_dir_ = "chart_USA/"
         self.base_web_site_ = "https://finance.yahoo.com/quote/%s"
         self.time_frame_ = 5
+        self.balance_ = 10000
 
     def crawling_time(self):
         now = time.localtime()
@@ -77,6 +78,7 @@ class KoreaStockMarketConfig(StockMarketConfig):
         self.char_dir_ = "chart_Korea/"
         self.base_web_site_ = "http://finance.daum.net/quotes/A%s"
         self.time_frame_ = 5
+        self.balance_ = 10000000
 
     def crawling_time(self):
         now = time.localtime()
@@ -115,6 +117,7 @@ class TaiwanStockMarketConfig(StockMarketConfig):
         self.char_dir_ = "chart_Taiwan/"
         self.base_web_site_ = "https://finance.yahoo.com/quote/%s"
         self.time_frame_ = 5
+        self.balance_ = 250000
 
     def crawling_time(self):
         now = time.localtime()

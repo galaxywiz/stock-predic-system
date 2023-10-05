@@ -12,12 +12,17 @@ from pandas import DataFrame
 import urllib.request
 from bs4 import BeautifulSoup
 import yfinance as yf
+import pyupbit
+import ccxt
 
+import time
 from datetime import datetime
 from datetime import timedelta
 
 import traceback
 import logger
+
+import marketModule
 #----------------------------------------------------------#
 # 주식 목록 갖고오기 (상위)
 class StockCrawler:
@@ -257,7 +262,7 @@ class FutureCrawler(StockCrawler):
         df.rename(columns={'Date': 'Date', 'High': 'high', 'Low': 'low', 'Open': 'open', 'Close': 'close', 'Volume' : 'vol'}, inplace = True)
         df['Date'] = df['Date'].dt.strftime('%Y-%m-%d')
 
-        features = ['Date', 'open', 'high', 'low', 'close', 'vol']
+        features = ['Date', 'Open', 'High', 'Low', 'Close', 'Vol']
         df = df[features]
         
         print(df)
@@ -269,3 +274,116 @@ class FutureCrawler(StockCrawler):
         df = self._load_from_file(targetList)
         df['ranking'] = 0
         return df
+    
+class UpbitCoinCrawler(StockCrawler):            
+    # 비트코인
+    # 설명서 https://wikidocs.net/31063
+    def get_stock_data(self, ticker, load_count, time_frame=1):
+        cnt = 200
+        if load_count >= 1000:
+            cnt = 200
+        else:
+            cnt = 100
+        frame = "minute%d" % time_frame
+        ticker = "KRW-" + ticker
+        df = pyupbit.get_ohlcv(ticker, interval=frame, count=cnt)
+        df.reset_index(inplace=True, drop=False)
+
+        df.rename(columns={'index': 'candleTime', 'high': 'high', 'low': 'low', 'open': 'start', 'close': 'close', 'volume' : 'vol'}, inplace = True)
+        df['candleTime'] = df['candleTime'].dt.strftime('%Y-%m-%d %H:%M:%S')
+        features = ['candleTime', 'start', 'high', 'low', 'close', 'vol']
+        df = df[features]
+        
+        print(df)
+        return df
+    
+    def get_stocks_list(self, limit):
+        with open("./list_bitcoin.txt", "r", encoding="utf-8") as f:
+            target_list = f.read().splitlines()
+        df = self._load_from_file(target_list)
+        df['ranking'] = 0
+        return df
+
+class BinanceCoinCrawler(StockCrawler):            
+    # 비트코인
+    # 설명서 https://wikidocs.net/31065
+    def stand_coin(self):
+        return "BTC"
+    def favority_coin(self):
+        return ["ETH", "USDT", "BNB", "DOGE", "ADA"]
+    
+    def get_stock_data(self, ticker, load_count, time_frame=1):
+        frame = "%dm" % time_frame
+        try:
+            module = marketModule.MarketModule.instance()
+            market = module.market()
+            ohlcvs = market.fetch_ohlcv(ticker, timeframe=frame, limit=load_count)
+            for ohlc in ohlcvs:
+                time_stamp = datetime.fromtimestamp(ohlc[0]/1000).strftime('%Y-%m-%d %H:%M:%S')
+                ohlc[0] = time_stamp
+            df = DataFrame(ohlcvs, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Vol'])
+            #print(df)
+            return df
+        except:
+            logger.error("%s get data load fail" % ticker)   
+            logger.error(traceback.format_exc()) 
+            return None
+
+    def get_stocks_list(self, limit, debug=None):
+        module = marketModule.MarketModule.instance()
+        market = module.market()
+        total_tickers = market.fetch_tickers()
+        # markets 에서 btc 인것만 빼놓는다
+        ticker_list = []
+
+        for ticker in total_tickers.keys():
+            btc = self.stand_coin()
+            tickers = ticker.split('/')
+            if len(tickers) <= 1:
+                continue
+            if tickers[1] == btc and len(tickers[1]) == len(btc):
+                favor_list = self.favority_coin()
+                for coin in favor_list:
+                    if tickers[0] == coin and len(tickers[0]) == len(coin):
+                        ticker_list.append(ticker)
+                        break
+
+        index = 0
+        now_date = time.strftime(self.DATE_FMT, time.localtime(time.time()))
+        df = DataFrame(columns = ("name", "ticker", "ranking"))
+        for ticker in ticker_list:
+            try:
+                ohlcvs = market.fetch_ohlcv(ticker, limit=1)
+                ohlc = ohlcvs[0]
+                date = datetime.fromtimestamp(ohlc[0]/1000).strftime(self.DATE_FMT)
+                if now_date != date:
+                    logger.error("this coin not able %s : %s" %(ticker, date))
+                    continue
+        
+                name = str(ticker).replace('/','_')
+                new_row = {'name': name, 'ticker': ticker, 'ranking': 0}
+                df.loc[-1] = new_row
+                df = df.reset_index(drop=True)
+                logger.info("coin ticker[%s] regist" % ticker)
+
+                if debug == True:
+                    index += 1
+                    if index > 10:
+                        break
+            except:
+                logger.error("%s get list load fail" % ticker) 
+                logger.error(traceback.format_exc())
+                continue
+
+        return df
+
+    def get_stocks_list_from_file(self, limit):
+        with open("./list_biance.txt", "r", encoding="utf-8") as f:
+            target_list = f.read().splitlines()
+        df = self._load_from_file(target_list)
+        df['ranking'] = 0
+        return df
+
+class BinanceBNBCoinCrawler(BinanceCoinCrawler):
+    def stand_coin(self):
+        return "BNB"

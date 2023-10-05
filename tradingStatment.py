@@ -133,7 +133,7 @@ class TradingStatement:
         profit_rate = self.profit_rate()
         lose_rate = self.lose_rate()
         log = "! [%s][%s] 의 백테스팅 리포트\n" % (self.stock_data_.name_, self.trading_name_)
-        log += "+ [{0}][{1}] 의 승률 {2:.2f}, 거래수 {3}, 총이익 {4:,.2f}]\n".format(
+        log += "+ [{0}][{1}] 의 승률[{2:.2f}], 거래수[{3}], 총이익[{4:,.2f}]\n".format(
             self.stock_data_.name_, self.trading_name_, win_rate * 100, trading_count, self.total_prtofit())
         log += "+ 수익율[{0:.2f}]%, 손실율[{1:.2f}]% , 최적 배팅 비율[{2:.2f}]%\n".format(
             profit_rate * 100, lose_rate * 100, self.kelly_rate_ *100)
@@ -191,10 +191,11 @@ class TradingStatement:
 
         # 결과 요약 텍스트
         result_summary = self.log_summry()
+        result_summary_lines = result_summary.split('\n')
 
         # 데이터프레임 생성
         df_backtesting = pd.DataFrame(data)
-        df_summary = pd.DataFrame({'Summary': [result_summary]})
+        df_summary = pd.DataFrame({'Summary': result_summary_lines})
 
         dir = "./excel"
         if not os.path.exists(dir):

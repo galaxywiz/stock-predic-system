@@ -18,3 +18,8 @@ REALTECK:2379:44
 ACER:2353:45
 EVA_AIR:2618:50
 CHINA_AIR:2610:51
+Yuanta_US_20+_Year_Bond:ETF00720B:100
+Cathay_Sustainability_High_Dividend_ETF:00878:101
+Capital_Tip_Customized_Taiwan_Select_High_Dividend_ETF:00919:102
+Fuh_Hwa_Taiwan_Technology_Dividend_Highlight_ETF:00929:103
+CTBC_Banking_Senior_10+_Year_Bond_ETF:00773B:104

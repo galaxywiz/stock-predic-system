@@ -223,23 +223,19 @@ class KoreaStockCrawler(StockCrawler):
 #----------------------------------------------------------#
 ### 구글이 안되니 아후에서 긁자.
 class TaiwanStockCrawler(StockCrawler):
-    def __get_ticker(self, ticker):
-        if ticker[0] == '^':
-            return ticker
-            
-        t = ticker + ".TW"
-        return t
-        # try:
-        #     web.get_quote_yahoo(t)['marketCap']
-        #     return t
-        # except:
-        #     return ticker
-
     def get_stock_data(self, ticker, loadDays):
         rowTicker = ticker
         try:
-            ticker = self.__get_ticker(ticker)
-            df = super().get_stock_data(ticker, loadDays)
+            # 대만은 TW, 채권은 TWO, 지수는 앞에 ^
+            if ticker[0] == '^':
+                t = ticker                
+            else:
+                t = ticker + ".TW"            
+
+            df = super().get_stock_data(t, loadDays)
+            if df is None:
+                t = ticker + ".TWO"            
+                df = super().get_stock_data(t, loadDays)
             return df
 
         except:

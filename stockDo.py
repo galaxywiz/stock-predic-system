@@ -105,4 +105,5 @@ class StrategyStockDo(PredicStockDo):
 
         for trading_statement in self.trading_history_:
             trading_statement.log() 
+            trading_statement.print_excel()
  

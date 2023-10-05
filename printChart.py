@@ -22,10 +22,10 @@ class PrintChart:
             data_len = 50
 
             candle = sd.candle0()
-            close_price = candle["Close"]
+            close_price = candle['close']
             per_close = close_price / 100
-            dateT = candle['Date'] + datetime.timedelta(days=1)
-            #dateT = datetime.datetime.strptime(candle['Date'], date_fmt).date() + datetime.timedelta(days=1)
+            dateT = candle['date'] + datetime.timedelta(days=1)
+            #dateT = datetime.datetime.strptime(candle['date'], date_fmt).date() + datetime.timedelta(days=1)
             predic = sd.predic_price_[0]
 
             open_price = predic - per_close
@@ -36,17 +36,17 @@ class PrintChart:
                 arrow = 'arrow-down'
                 open_price = predic + per_close
 
-            group = ['Date','Open','High','Low','Close']
+            group = ['date','open','high','low','close']
             df = sd.chart_data_[group].copy()
             df = df.tail(data_len)
             pdf = pd.DataFrame(data=[[dateT, open_price, predic + (per_close*2) , predic - (per_close*2), predic]], 
                             columns=group)
             df = pd.concat([df, pdf], ignore_index=True)
-            fig = go.Figure(data=[go.Candlestick(x=df['Date'],
-                                    open=df['Open'],
-                                    high=df['High'],
-                                    low=df['Low'],
-                                    close=df['Close'],
+            fig = go.Figure(data=[go.Candlestick(x=df['date'],
+                                    open=df['open'],
+                                    high=df['high'],
+                                    low=df['low'],
+                                    close=df['close'],
                                     increasing_line_color= color_up,
                                     decreasing_line_color= color_down, 
                                     name='day data')])
@@ -73,7 +73,7 @@ class PrintChart:
 
             val = u.calcRate(close_price, predic)
             title = "%s의 [%s] 예측 종가 [%2.2f] 전일대비[%2.2f]" % (sd.name_, dateT.strftime(date_fmt), predic, val*100) 
-            fig.update_layout(xaxis_title="Date",
+            fig.update_layout(xaxis_title='date',
                             yaxis_title="Close price",
                             title_text=title,
                             xaxis={"rangeslider":{"visible":False}}

@@ -15,16 +15,16 @@ class FiveLineStockStrategy(StockStrategy):
         df = df_copy.copy()
 
         reg = linear_model.LinearRegression()
-        df.loc[:, 'itx'] =[i for i in range(1,len(list(df['Close'])) + 1)]
+        df.loc[:, 'itx'] =[i for i in range(1,len(list(df['close'])) + 1)]
         # x , y
-        reg.fit (df['itx'].values.reshape(-1, 1),df['Close'])
+        reg.fit (df['itx'].values.reshape(-1, 1),df['close'])
         df.loc[:, 'coef'] = reg.coef_[0]
         df.loc[:, 'intercept'] = reg.intercept_
         # y = c+x*b = 截距+x*斜率
         #추세선
         df.loc[:, 'priceTL'] = df['intercept'] + (df['itx'] * df['coef'])
         # 오차
-        df.loc[:, 'y-TL'] = df['Close'] - df['priceTL']
+        df.loc[:, 'y-TL'] = df['close'] - df['priceTL']
         # 표준편차
         df.loc[:, 'SD'] = df['y-TL'].std()
         
@@ -40,14 +40,14 @@ class FiveLineStockStrategy(StockStrategy):
         return df
     
     def bid_price(self, candle):
-        close = candle['Close']
+        close = candle['close']
         TL2SD = candle['TL-2SD']
         if close <= TL2SD:
             return True
         return False
     
     def ask_price(self, candle):
-        close = candle['Close']
+        close = candle['close']
         TL2SD = candle['TL+2SD']
         if close >= TL2SD:
             return True
@@ -61,10 +61,10 @@ class FiveLineStockStrategy(StockStrategy):
         plt.rc('font', family='Malgun Gothic')   # 나눔 폰트를 사용하려면 해당 폰트 이름을 지정
         plt.figure(figsize=(16, 8))
 
-        for i in ['Close', 'priceTL', 'TL-2SD', 'TL-SD', 'TL+SD', 'TL+2SD']:
-            plt.plot(df['Date'], df[i], label=i)
+        for i in ['close', 'priceTL', 'TL-2SD', 'TL-SD', 'TL+SD', 'TL+2SD']:
+            plt.plot(df['date'], df[i], label=i)
 
-        plt.xlabel("Date")
+        plt.xlabel('date')
         plt.ylabel("Price")
         title = "%s(%s)" % (sd.name_, sd.ticker_)
         plt.title(title)

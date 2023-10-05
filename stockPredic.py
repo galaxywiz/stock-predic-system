@@ -39,9 +39,9 @@ class StockPredic:
         self.sequence_length = 5        # 5일 데이터로 6일째를 예측한다
 
         # 데이터 셋 관련인데, 어차피 사람이 만든 지표는 모르는거임, 최대한 노이즈 없는 데이터만 넣자
-        self.data_part_orgin_ = ['Date','Open','High','Low','Close']
-        self.data_part_x_ = ['Open','High','Low']
-        self.data_part_y_ = ['Close']
+        self.data_part_orgin_ = ['date','open','high','low','close']
+        self.data_part_x_ = ['open','high','low']
+        self.data_part_y_ = ['close']
         # 스케일러 분리해야
         self.data_part_index_ = ['OpenIdx','HighIdx','LowIdx','CloseIdx']
 
@@ -58,12 +58,12 @@ class StockPredic:
         # 시장의 인덱스(코스피100, S&P500 같은) 지수 갖고오기
         self.stock_index_ = stock_price_index
         self.df_index_ = stock_price_index.chart_data_[self.data_part_orgin_].copy()
-        self.df_index_ = self.df_index_.rename(columns={'Open': 'OpenIdx', 'High': 'HighIdx', 'Low' : 'LowIdx', 'Close' : 'CloseIdx'})
-        self.df_ = pd.merge(self.df_, self.df_index_, how='left', on='Date')
+        self.df_index_ = self.df_index_.rename(columns={'open': 'OpenIdx', 'high': 'HighIdx', 'low' : 'LowIdx', 'close' : 'CloseIdx'})
+        self.df_ = pd.merge(self.df_, self.df_index_, how='left', on='date')
         
-        self.data_part_orgin_ = ['Open','High','Low','Close']
-        self.data_part_ = ['OpenIdx','HighIdx','LowIdx','CloseIdx','Open','High','Low','Close']
-        self.data_part_x_ = ['OpenIdx','HighIdx','LowIdx','CloseIdx','Open','High','Low']
+        self.data_part_orgin_ = ['open','high','low','close']
+        self.data_part_ = ['OpenIdx','HighIdx','LowIdx','CloseIdx','open','high','low','close']
+        self.data_part_x_ = ['OpenIdx','HighIdx','LowIdx','CloseIdx','open','high','low']
 
     def do_study(self, model_name, train_loader, test_loader, input_size, new_model = False):
         if os.path.isfile(model_name) and new_model == False:

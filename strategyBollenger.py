@@ -18,7 +18,7 @@ class BollengerStockStrategy(StockStrategy):
         multiplier = 2 # 표준편차의 배수
     
         # 종가 기준으로 볼린저 밴드 계산
-        arr_close = np.asarray(df["Close"], dtype='f8')
+        arr_close = np.asarray(df['close'], dtype='f8')
         upper, middle, low = ta._ta_lib.BBANDS(arr_close, window, multiplier, 2, matype=MA_Type.SMA)
         df["Upper"] = upper
         df["Middle"] = middle
@@ -26,14 +26,14 @@ class BollengerStockStrategy(StockStrategy):
         return df
     
     def bid_price(self, candle):
-        close = candle['Close']
+        close = candle['close']
         lower = candle['Lower']
         if close <= lower:
             return True
         return False
     
     def ask_price(self, candle):
-        close = candle['Close']
+        close = candle['close']
         upper = candle['Upper']
         if close >= upper:
             return True
@@ -47,10 +47,10 @@ class BollengerStockStrategy(StockStrategy):
         plt.rc('font', family='Malgun Gothic')   # 나눔 폰트를 사용하려면 해당 폰트 이름을 지정
         plt.figure(figsize=(16, 8))
 
-        for i in ['Close', 'Upper', 'Middle', 'Lower']:
-            plt.plot(df['Date'], df[i], label=i)
+        for i in ['close', 'Upper', 'Middle', 'Lower']:
+            plt.plot(df['date'], df[i], label=i)
 
-        plt.xlabel("Date")
+        plt.xlabel('date')
         plt.ylabel("Price")
         title = "%s(%s)" % (sd.name_, sd.ticker_)
         plt.title(title)

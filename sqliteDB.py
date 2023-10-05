@@ -89,7 +89,7 @@ class SqliteDB:
         with self.conn_:
             try:
             #    list_of_rows = dataframe.values.tolist()
-                dataframe.to_sql(table_name, self.conn_, if_exists="replace", index = False, dtype={"Date": "TIMESTAMP"})
+                dataframe.to_sql(table_name, self.conn_, if_exists="replace", index = False, dtype={'date': "TIMESTAMP"})
                 self.conn_.commit()
             except:
                 logger.error(traceback.format_exc())
@@ -112,7 +112,7 @@ class SqliteDB:
                 else:
                     sql = "SELECT %s FROM \'%s\' WHERE Date >= \'%s\' ORDER BY %s" % (columns, table_name, openTime, orderBy)
      
-                df = pd.read_sql(sql, self.conn_, index_col=None, parse_dates=["Date"])
+                df = pd.read_sql(sql, self.conn_, index_col=None, parse_dates=['date'])
                 length = len(df) 
                 if length == 0:
                     return False, None

@@ -15,7 +15,7 @@ class MacdStockStrategy(StockStrategy):
         df = df_copy.copy()
 
         # 종가 기준으로 볼린저 밴드 계산
-        arr_close = np.asarray(df["Close"], dtype='f8')
+        arr_close = np.asarray(df['close'], dtype='f8')
         macd, signal, osi = ta._ta_lib.MACD(arr_close, fastperiod=12, slowperiod=26, signalperiod=9)
         df["MACD"] = macd
         df["MACDSignal"] = signal
@@ -44,10 +44,10 @@ class MacdStockStrategy(StockStrategy):
         plt.rc('font', family='Malgun Gothic')   # 나눔 폰트를 사용하려면 해당 폰트 이름을 지정
         plt.figure(figsize=(16, 8))
 
-        for i in ['Close', 'MACD', 'MACDSignal']:
-            plt.plot(df['Date'], df[i], label=i)
+        for i in ['close', 'MACD', 'MACDSignal']:
+            plt.plot(df['date'], df[i], label=i)
 
-        plt.xlabel("Date")
+        plt.xlabel('date')
         plt.ylabel("Price")
         title = "%s(%s)" % (sd.name_, sd.ticker_)
         plt.title(title)

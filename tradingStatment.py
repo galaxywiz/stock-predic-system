@@ -12,7 +12,7 @@ class Transaction:
         if batting_money == 0:
             self.amount_ = 1
         else:
-            bid_price = self.bid_candle_["Close"]
+            bid_price = self.bid_candle_['close']
             amount = int(batting_money / bid_price)
             if amount <= 0:
                 return 0
@@ -24,18 +24,18 @@ class Transaction:
         self.ask_candle_ = candle
 
     def calc_profit(self):
-        bid_price = self.bid_candle_["Close"]
-        ask_price = self.ask_candle_["Close"]
+        bid_price = self.bid_candle_['close']
+        ask_price = self.ask_candle_['close']
         profit = ask_price - bid_price
         return profit * self.amount_
     
     def calc_final_money(self):
-        ask_price = self.ask_candle_["Close"]
+        ask_price = self.ask_candle_['close']
         return ask_price * self.amount_
     
     def calc_profit_rate(self):
-        bid_price = self.bid_candle_["Close"]
-        ask_price = self.ask_candle_["Close"]
+        bid_price = self.bid_candle_['close']
+        ask_price = self.ask_candle_['close']
         profit_rate = (ask_price - bid_price) / bid_price
         return profit_rate
 
@@ -154,8 +154,8 @@ class TradingStatement:
             bid_candle = tran.bid_candle_
             ask_candle = tran.ask_candle_
             logger.info("|{0}|{1:,.2f}|{2}|{3:,.2f}|{4}|{5:,.2f}|{6}|{7:,.2f}|{8:,.2f}"
-                        .format(bid_candle["Date"], bid_candle["Close"], tran.amount_, bid_candle["Close"] * tran.amount_
-                            , ask_candle["Date"], ask_candle["Close"], tran.amount_, ask_candle["Close"] * tran.amount_
+                        .format(bid_candle['date'], bid_candle['close'], tran.amount_, bid_candle['close'] * tran.amount_
+                            , ask_candle['date'], ask_candle['close'], tran.amount_, ask_candle['close'] * tran.amount_
                             , tran.calc_profit()))
 
     def print_excel(self):
@@ -169,10 +169,10 @@ class TradingStatement:
         for tran in self.transactions_:
             bid_candle = tran.bid_candle_
             ask_candle = tran.ask_candle_
-            bid_date.append(bid_candle["Date"])
-            bid_price.append(bid_candle["Close"])
-            ask_date.append(ask_candle["Date"])
-            ask_price.append(ask_candle["Close"])
+            bid_date.append(bid_candle['date'])
+            bid_price.append(bid_candle['close'])
+            ask_date.append(ask_candle['date'])
+            ask_price.append(ask_candle['close'])
             amount.append(tran.amount_)
             profit.append(tran.calc_profit())
 

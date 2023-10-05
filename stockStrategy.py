@@ -54,7 +54,7 @@ class StockStrategy:
                         amount = transaction.set_bid(candle, bet_money)
                         if amount <= 0:
                             continue
-                        temp = balance - (amount * candle["Close"])
+                        temp = balance - (amount * candle['close'])
                         if temp <= 0:
                             continue
                         balance = temp

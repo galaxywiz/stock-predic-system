@@ -10,7 +10,7 @@ class Backtest:
         self.stock_data_ = stock_strategy.stock_data_ # 주식 데이터
         self.signals_ = pd.DataFrame(index=self.stock_data_.index) # 매수/매도 신호 데이터프레임
         self.positions_ = pd.DataFrame(index=self.stock_data_.index) # 보유 주식 수 데이터프레임
-        self.trades_ = pd.DataFrame(columns=['Date', 'Type', 'Price', 'Quantity', 'Commission']) # 거래 내역 데이터프레임
+        self.trades_ = pd.DataFrame(columns=['date', 'Type', 'Price', 'Quantity', 'Commission']) # 거래 내역 데이터프레임
         self.portfolio_ = pd.DataFrame(index=self.stock_data_.index) # 포트폴리오 가치 데이터프레임
         self.stats_ = None # 백테스팅 통계 데이터프레임
 
@@ -30,7 +30,7 @@ class Backtest:
         quantity = 0 # 보유 주식 수
         for i in range(len(self.signals_)):
             date = self.signals_.index[i] # 날짜
-            price = self.stock_data_.loc[date, 'Close'] # 종가
+            price = self.stock_data_.loc[date, 'close'] # 종가
             signal = self.signals_.loc[date, 'signal'] # 신호
 
             if signal == 1: # 매수 신호이면
@@ -81,9 +81,9 @@ class Backtest:
         buy_signals = self.signals_[self.signals_['signal'] == 1] # 매수 신호 데이터프레임 생성
         sell_signals = self.signals_[self.signals_['signal'] == -1] # 매도 신호 데이터프레임 생성
 
-        self.stock_data_['Close'].plot(ax=axes[1], label='Stock Price') # 주식 가격 차트 그리기
-        axes[1].plot(buy_signals.index, self.stock_data_.loc[buy_signals.index, 'Close'], '^', markersize=10, color='g', label='Buy') # 매수 신호 표시하기
-        axes[1].plot(sell_signals.index, self.stock_data_.loc[sell_signals.index, 'Close'], 'v', markersize=10, color='r', label='Sell') # 매도 신호 표시하기
+        self.stock_data_['close'].plot(ax=axes[1], label='Stock Price') # 주식 가격 차트 그리기
+        axes[1].plot(buy_signals.index, self.stock_data_.loc[buy_signals.index, 'close'], '^', markersize=10, color='g', label='Buy') # 매수 신호 표시하기
+        axes[1].plot(sell_signals.index, self.stock_data_.loc[sell_signals.index, 'close'], 'v', markersize=10, color='r', label='Sell') # 매도 신호 표시하기
         axes[1].set_title('Stock Price and Signals') # 제목 설정
         axes[1].set_ylabel('Price') # y축 라벨 설정
 

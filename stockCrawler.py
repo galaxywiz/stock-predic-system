@@ -52,8 +52,8 @@ class StockCrawler:
             df = df.dropna()
             df.reset_index(inplace=True, drop=False)
             stockDf = pd.DataFrame(df, columns=['날짜', '시가', '고가', '저가', '종가', '거래량'])
-            stockDf.rename(columns={'날짜': 'Date', '고가': 'High', '저가': 'Low', '시가': 'Open', '종가': 'Close', '거래량' : 'Volume'}, inplace = True)
-            stockDf['Date'] = stockDf['Date'].str.replace(".", "-")
+            stockDf.rename(columns={'날짜': 'date', '고가': 'high', '저가': 'low', '시가': 'open', '종가': 'close', '거래량' : 'volume'}, inplace = True)
+            stockDf['date'] = stockDf['date'].str.replace(".", "-")
             
             print(stockDf)
             return stockDf
@@ -70,8 +70,9 @@ class StockCrawler:
             if not df.empty:
                 df.reset_index(inplace=True, drop=False)
                 df['Date'] = pd.to_datetime(df.Date, format='%Y-%m-%d')
-
-                features =['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+                df.rename(columns={'Date': 'date', 'Open': 'open', 'High': 'high', 'Low': 'low', 'Close': 'close', 'Volume' : 'volume'}, inplace = True)
+                
+                features =['date', 'open', 'high', 'low', 'close', 'volume']
                 df = df[features]
                 return df
             return None
@@ -259,10 +260,10 @@ class FutureCrawler(StockCrawler):
         df = pd.DataFrame(hist)
         
         df.reset_index(inplace=True, drop=False)
-        df.rename(columns={'Date': 'Date', 'High': 'high', 'Low': 'low', 'Open': 'open', 'Close': 'close', 'Volume' : 'vol'}, inplace = True)
-        df['Date'] = df['Date'].dt.strftime('%Y-%m-%d')
+        df.rename(columns={'date': 'date', 'high': 'high', 'low': 'low', 'open': 'open', 'close': 'close', 'volume' : 'vol'}, inplace = True)
+        df['date'] = df['date'].dt.strftime('%Y-%m-%d')
 
-        features = ['Date', 'Open', 'High', 'Low', 'Close', 'Vol']
+        features = ['date', 'open', 'high', 'low', 'close', 'Vol']
         df = df[features]
         
         print(df)
@@ -321,7 +322,7 @@ class BinanceCoinCrawler(StockCrawler):
             for ohlc in ohlcvs:
                 time_stamp = datetime.fromtimestamp(ohlc[0]/1000).strftime('%Y-%m-%d %H:%M:%S')
                 ohlc[0] = time_stamp
-            df = DataFrame(ohlcvs, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Vol'])
+            df = DataFrame(ohlcvs, columns=['date', 'open', 'high', 'low', 'close', 'Vol'])
             #print(df)
             return df
         except:

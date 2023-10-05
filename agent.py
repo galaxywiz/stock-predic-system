@@ -41,7 +41,7 @@ class Agent:
 
         buyCount = self.calcBuyCount(sd)
         nowCandle = sd.getCandleAt(timeIdx)
-        nowPrice = nowCandle["Close"]
+        nowPrice = nowCandle['close']
         self.account_ -= (buyCount * nowPrice)
         
         sd.buyCount_ = buyCount
@@ -55,11 +55,11 @@ class Agent:
 
         sd = self.stocks_[code]
         buyCandle = sd.getCandleAt(sd.buyIdx_)
-        buyDate = buyCandle["Date"]
+        buyDate = buyCandle['date']
 
         nowCandle = sd.getCandleAt(timeIdx)
-        nowPrice = nowCandle["Close"]
-        sellDate = nowCandle["Date"]
+        nowPrice = nowCandle['close']
+        sellDate = nowCandle['date']
 
         value = sd.calcValue(timeIdx = timeIdx)
         self.account_ += value

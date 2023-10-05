@@ -108,16 +108,17 @@ class StockMarket:
         if ret == False:
             logger.error("[%s][%s] load fail. from db" % (name, ticker))
             return None
-              
+
+        LIMIT_DAY = 100
         #30일전 데이터가 있는지 체크
-        if len(df) < 35:
+        if len(df) < LIMIT_DAY:
             logger.error("[%s][%s] load fail. because data too short" % (name, ticker))
             return None
 
-        prev_date_str = df.iloc[-15]['Date']
+        prev_date_str = df.iloc[-15]['date']
         candle_date = prev_date_str #datetime.strptime(prev_date_str, self.DATE_FMT)
         elpe = (now - candle_date).days
-        if elpe > 30:
+        if elpe > LIMIT_DAY:
             logger.error("%s 데이터 로딩 실패, db 에서 데이터 삭제" % name)
             self.config_.day_price_db_.delete(ticker)
             return None
@@ -162,7 +163,7 @@ class StockMarket:
 
         now = datetime.now()
         now_candle = sd.candle0()
-        date_str = now_candle["Date"]
+        date_str = now_candle['date']
         candle_date = datetime.strptime(date_str, self.DATE_FMT)
         elpe = (now - candle_date).days
         

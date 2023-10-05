@@ -20,9 +20,9 @@ signal_window = 9 # MACD 신호선 윈도우 크기
 # MACD 계산 함수 정의
 def macd(df, short_window, long_window, signal_window):
     # 종가 기준으로 단기 이동평균선 계산
-    df["short_ema"] = df["close"].ewm(span=short_window).mean()
+    df["short_ema"] = df['close'].ewm(span=short_window).mean()
     # 종가 기준으로 장기 이동평균선 계산
-    df["long_ema"] = df["close"].ewm(span=long_window).mean()
+    df["long_ema"] = df['close'].ewm(span=long_window).mean()
     # MACD 값 계산
     df["MACD"] = df["short_ema"] - df["long_ema"]
     # MACD 신호선 값 계산
@@ -34,10 +34,10 @@ klines = client.get_historical_klines(symbol, interval, "500 hours ago UTC")
 
 # 데이터프레임으로 변환
 df = pd.DataFrame(klines)
-df.columns = ["open_time", "open", "high", "low", "close", "volume", "close_time", "qav", "num_trades", "taker_base_vol", "taker_quote_vol", "is_best_match"]
+df.columns = ["open_time", 'open', 'high', 'low', 'close', 'volume', "close_time", "qav", "num_trades", "taker_base_vol", "taker_quote_vol", "is_best_match"]
 
 # 가격과 거래량 데이터만 남기고 나머지 열 삭제
-df = df[["open", "high", "low", "close", "volume"]]
+df = df[['open', 'high', 'low', 'close', 'volume']]
 
 # 가격 데이터 타입을 실수형으로 변환
 df = df.astype(float)

@@ -29,6 +29,7 @@ class StockStrategy:
     def ask_price(self, candle):
         pass
     
+    # kelly_rate 를 매 순간 마다 계산 해 보는게 좋을듯...
     def back_test(self, transaction_simul=True, balance=0, kelly_rate=0):
         df = self.stock_data_.chart_data_
         trading_statement = TradingStatement(sd=self.stock_data_

@@ -44,6 +44,8 @@ class TradingStatement:
         self.stock_data_ = sd
         self.transactions_ = []
         self.balance_ = balance
+        self.init_balance_ = balance
+
         self.trading_ = trading
         self.kelly_rate_ = kelly_rate
         self.trading_name_ = trading.__class__.__name__
@@ -114,6 +116,10 @@ class TradingStatement:
         
         q = 1 - p
         b = profit / loss  # 이길 때 얻는 이익과 지면 손실 비율의 비율
+        if b == 0:
+            logger.info("켈리공식으로 이익, 손실 비율 0으론 계산 불가")
+            return 0
+        
         f_star = (p * b - q) / b
         return f_star
     
@@ -133,11 +139,11 @@ class TradingStatement:
         profit_rate = self.profit_rate()
         lose_rate = self.lose_rate()
         log = "! [%s][%s] 의 백테스팅 리포트\n" % (self.stock_data_.name_, self.trading_name_)
-        log += "+ [{0}][{1}] 의 승률[{2:.2f}], 거래수[{3}], 총이익[{4:,.2f}]\n".format(
-            self.stock_data_.name_, self.trading_name_, win_rate * 100, trading_count, self.total_prtofit())
+        log += "+ [{0}][{1}] 의 승률[{2:.2f}], 거래수[{3}], 자본금[{4:,.2f}], 총이익[{5:,.2f}]\n".format(
+            self.stock_data_.name_, self.trading_name_, win_rate * 100, trading_count, self.init_balance_, self.total_prtofit())
         log += "+ 수익율[{0:.2f}]%, 손실율[{1:.2f}]% , 최적 배팅 비율[{2:.2f}]%\n".format(
             profit_rate * 100, lose_rate * 100, self.kelly_rate_ *100)
-        log += "+ [{0}][{1}] 전략 [{2:.2f}]% 비율 배팅 시뮬시 => 총 금액[{3:,.2f}]\n".format(
+        log += "+ [{0}][{1}] 전략 [{2:.2f}]% 비율 배팅 시뮬시 => 총 금액[{3:,.2f}]".format(
             self.stock_data_.name_, self.trading_name_, self.kelly_rate_ * 100, self.balance_)
         return log
         

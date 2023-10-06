@@ -66,17 +66,15 @@ class StockMarket:
     #----------------------------------------------------------#
     # db 에 데이터 저장 하고 로딩!
     def __get_stock_info_from_web_to_db(self, name, ticker):
-        load_days = 365 * 5  #5 년치
+        load_days = 365 * 10  #10 년치
         
         df = self.config_.crawler_.get_stock_data(ticker, load_days)
         if df is None:
             logger.error("! 주식 [%s] 의 크롤링 실패" % (name))
             return None
 
-        # 데이터 저장    
-        db = self.config_.day_price_db_
-        db.save(ticker, df)
-
+        return df
+        
     def __check_db_exist(self, ticker):
         db = self.config_.day_price_db_
         
@@ -94,34 +92,50 @@ class StockMarket:
 
         return True, df
 
-    ## db 에서 데이터 봐서 있으면 말고 없으면 로딩
-    def __load_stock_data(self, name, ticker, market_cap_ranking):  
-        now = datetime.now()
-        # 일단 web에서 데이터 조회 및 저장
-        self.__get_stock_info_from_web_to_db(name, ticker)
-        
-        if self.__check_db_exist(ticker) == False:
-            logger.error("[%s][%s] load fail from web." % (name, ticker))
-            return None             
-        
-        ret, df = self.__load_from_db(ticker)
-        if ret == False:
-            logger.error("[%s][%s] load fail. from db" % (name, ticker))
-            return None
-
+    def __check_data_frame(self, df, name, ticker):
         LIMIT_DAY = 100
         #30일전 데이터가 있는지 체크
         if len(df) < LIMIT_DAY:
             logger.error("[%s][%s] load fail. because data too short" % (name, ticker))
-            return None
+            return False
 
         prev_date_str = df.iloc[-15]['date']
         candle_date = prev_date_str #datetime.strptime(prev_date_str, self.DATE_FMT)
+        now = datetime.now()
+
         elpe = (now - candle_date).days
         if elpe > LIMIT_DAY:
             logger.error("%s 데이터 로딩 실패, db 에서 데이터 삭제" % name)
             self.config_.day_price_db_.delete(ticker)
-            return None
+            return False
+        
+        return True
+        
+    ## 주식 데이터 로딩 ##
+    def __load_stock_data(self, name, ticker, market_cap_ranking):  
+        # 일단 web에서 데이터 조회 및 저장
+        df = self.__get_stock_info_from_web_to_db(name, ticker)
+        if df is None:
+            return
+        
+        # 데이터 저장    
+        db = self.config_.day_price_db_
+        db.save(ticker, df)
+
+        # db 저장했다가 로딩하는 처리 block. 굳이...day 하는데 필요한가 싶음.
+        USE_DB = False
+        if USE_DB:
+            if self.__check_db_exist(ticker) == False:
+                logger.error("[%s][%s] load fail from web." % (name, ticker))
+                return None             
+            
+            ret, df = self.__load_from_db(ticker)
+            if ret == False:
+                logger.error("[%s][%s] load fail. from db" % (name, ticker))
+                return None
+
+        if self.__check_data_frame(df, name, ticker) is False:
+            return
 
         sd = StockData(ticker, name, df)
         self.stock_pool_[name] = sd

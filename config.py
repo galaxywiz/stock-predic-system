@@ -2,7 +2,7 @@ from datetime import datetime
 from datetime import timedelta
 import time
 
-from stockCrawler import USAStockCrawler, FutureCrawler, KoreaStockCrawler, TaiwanStockCrawler
+from stockCrawler import USAStockCrawler, FutureCrawler, KoreaStockCrawler, TaiwanStockCrawler, BinanceCoinCrawler, UpbitCoinCrawler
 from sqliteStockDB import DayPriceDB, DayPriceFloatDB, DayPreDB
 from stockData import StockData, TradingState, StockType
 from messenger import TelegramBot, LineBot
@@ -141,7 +141,6 @@ class UpbitStockMarketConfig(StockMarketConfig):
         self.is_file_load_ = True
         self.list_file_name_ = "list_coin.txt"
 
-        self.strategy_ = MACDTradeStrategy()
         self.limit_list_size_ = -1
         self.prediction_ = False
 
@@ -161,6 +160,13 @@ class UpbitStockMarketConfig(StockMarketConfig):
 #---------------------------------------------------------#
 class BinanceStockMarketConfig(StockMarketConfig):
     def __init__(self):
+        self.name_ = "Biance"
+        telegram_token = "임의 토큰"
+        telegram_id = "임의 아이디"
+        line_token = "라인 토큰"
+        #self.messenger_ = LineBot(token = line_token, id = telegram_id, name = self.name_)
+        self.messenger_ = TelegramBot(token = telegram_token, id = telegram_id, name = self.name_)
+
         self.telegram_token_ = "1807903004:AAE6PEWcccwrOO8Q8hY7u6vqZs7zQlRt8r4"
         self.telegram_id_ = "508897948" 
         self.DATE_FMT = "%Y-%m-%d %H:%M:%S"
@@ -172,12 +178,12 @@ class BinanceStockMarketConfig(StockMarketConfig):
         self.is_file_load_ = False
         self.list_file_name_ = "list_binance_coin.txt"
 
-        self.strategy_ = LarryRTradeStrategy()
         self.limit_list_size_ = -1
         self.prediction_ = False
 
         self.day_price_db_ = DayPriceFloatDB("BinanceCoinData.db", "day_price")
         self.day_pre_db_ = DayPreDB("BinanceCoinDayPre.db", "TODAY_STOCK_LIST")    
+        self.balance_ = 1
 
         self.char_dir_ = "chart_coins/"
         self.base_web_site_ = "https://www.binance.com/ko/trade/%s"

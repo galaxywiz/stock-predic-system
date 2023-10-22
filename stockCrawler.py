@@ -298,7 +298,7 @@ class UpbitCoinCrawler(StockCrawler):
         print(df)
         return df
     
-    def get_stocks_list(self, limit):
+    def get_stock_list(self, limit):
         with open("./list_bitcoin.txt", "r", encoding="utf-8") as f:
             target_list = f.read().splitlines()
         df = self._load_from_file(target_list)
@@ -311,7 +311,8 @@ class BinanceCoinCrawler(StockCrawler):
     def stand_coin(self):
         return "BTC"
     def favority_coin(self):
-        return ["ETH", "USDT", "BNB", "DOGE", "ADA"]
+        return ["BNB"]
+        #return ["ETH", "USDT", "BNB", "DOGE", "ADA"]
     
     def get_stock_data(self, ticker, load_count, time_frame=1):
         frame = "%dm" % time_frame
@@ -320,7 +321,7 @@ class BinanceCoinCrawler(StockCrawler):
             market = module.market()
             ohlcvs = market.fetch_ohlcv(ticker, timeframe=frame, limit=load_count)
             for ohlc in ohlcvs:
-                time_stamp = datetime.fromtimestamp(ohlc[0]/1000).strftime('%Y-%m-%d %H:%M:%S')
+                time_stamp = datetime.fromtimestamp(ohlc[0]/1000)#.strftime('%Y-%m-%d %H:%M:%S')
                 ohlc[0] = time_stamp
             df = DataFrame(ohlcvs, columns=['date', 'open', 'high', 'low', 'close', 'Vol'])
             #print(df)
@@ -330,7 +331,7 @@ class BinanceCoinCrawler(StockCrawler):
             logger.error(traceback.format_exc()) 
             return None
 
-    def get_stocks_list(self, limit, debug=None):
+    def get_stock_list(self, limit, debug=None):
         module = marketModule.MarketModule.instance()
         market = module.market()
         total_tickers = market.fetch_tickers()
@@ -350,16 +351,16 @@ class BinanceCoinCrawler(StockCrawler):
                         break
 
         index = 0
-        now_date = time.strftime(self.DATE_FMT, time.localtime(time.time()))
+    #    now_date = time.strftime(self.DATE_FMT, time.localtime(time.time()))
         df = DataFrame(columns = ("name", "ticker", "ranking"))
         for ticker in ticker_list:
             try:
-                ohlcvs = market.fetch_ohlcv(ticker, limit=1)
-                ohlc = ohlcvs[0]
-                date = datetime.fromtimestamp(ohlc[0]/1000).strftime(self.DATE_FMT)
-                if now_date != date:
-                    logger.error("this coin not able %s : %s" %(ticker, date))
-                    continue
+                # ohlcvs = market.fetch_ohlcv(ticker, limit=1)
+                # ohlc = ohlcvs[0]
+                # date = datetime.fromtimestamp(ohlc[0]/1000).strftime(self.DATE_FMT)
+                # if now_date != date:
+                #     logger.error("this coin not able %s : %s" %(ticker, date))
+                #     continue
         
                 name = str(ticker).replace('/','_')
                 new_row = {'name': name, 'ticker': ticker, 'ranking': 0}

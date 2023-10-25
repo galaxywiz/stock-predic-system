@@ -65,6 +65,8 @@ class PredicStockDo(StockDo):
 class StrategyStockDo(PredicStockDo):
     strategy_ = [FiveLineStockStrategy, BollengerStockStrategy, MacdStockStrategy]
     trading_history_ = []
+    bid_signal_ = []
+    ask_signal_ = []
 
     def do(self):
         self.__evaluation()
@@ -73,6 +75,7 @@ class StrategyStockDo(PredicStockDo):
     def back_test(self, strategy_template, sd, balance):
         strategy = strategy_template(stock_data=sd
                                      , char_dir=self.stock_market_.chart_dir_)
+        
         trading_statement = strategy.back_test(transaction_simul=False)
         kelly_rate = trading_statement.optimal_bet_ratio()
         if 0 < kelly_rate and kelly_rate < 1:
@@ -92,8 +95,17 @@ class StrategyStockDo(PredicStockDo):
                 trading_statement = self.back_test(strategy_template=template
                                                    ,sd = sd
                                                    ,balance=balance)
-                if trading_statement is not None:
-                    self.trading_history_.append(trading_statement)
+                if trading_statement is None:
+                    continue
+
+                self.trading_history_.append(trading_statement)
+                strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
+
+                if strategy.bid_signal_today() == True:
+                    self.bid_signal_.append(trading_statement)
+
+                if strategy.ask_signal_today() == True:
+                    self.ask_signal_.append(trading_statement)
 
     ## 결과 출력하기
     def __print(self):
@@ -101,9 +113,21 @@ class StrategyStockDo(PredicStockDo):
         for sd in sm.stock_pool_.values():
             for template in self.strategy_:
                 strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
-                strategy.print_chart()
+                strategy.print_chart()                
 
+        # 전체 결과 출력
         for trading_statement in self.trading_history_:
             trading_statement.log() 
             trading_statement.print_excel()
  
+        # 오늘 buy signal 출력
+        for trading_statement in self.bid_signal_:
+            log_summry = trading_statement.log_summry(info = "bid, buy, 매수 signal")
+            logger.info(log_summry)
+            sm.send_message(log_summry)
+
+        # 오늘 sell signal 출력
+        for trading_statement in self.ask_signal_:
+            log_summry = trading_statement.log_summry(info = "ask, sell, 매도 signal")
+            logger.info(log_summry)
+            sm.send_message(log_summry)

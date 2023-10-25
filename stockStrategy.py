@@ -77,8 +77,31 @@ class StockStrategy:
                     state = stockData.TradingState.BUY
                     
         return trading_statement
-        
 
+    # 오늘 일자로 매수 신호 나왔나
+    def bid_signal_today(self):
+        df = self.make_indicators(-1)
+        if df is None:
+            return False
+        
+        candle = df.iloc[-1]
+        if self.bid_price(candle):
+            return True
+        
+        return False
+    
+    # 오늘 일자로 매도 신호 나왔나
+    def ask_signal_today(self):
+        df = self.make_indicators(-1)
+        if df is None:
+            return False
+        
+        candle = df.iloc[-1]
+        if self.ask_price(candle):
+            return True
+        
+        return False
+    
     # 차트 출력해서 맞는지 검증
     def print_chart(self):
         pass

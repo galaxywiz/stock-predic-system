@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import stockData
+from stockData import TradingState
 import talib.abstract as ta
 from talib import MA_Type
 from tradingStatment import Transaction, TradingStatement
@@ -38,7 +39,9 @@ class StockStrategy:
                                              , kelly_rate=kelly_rate)
         transaction = Transaction()
         
-        state = stockData.TradingState.BUY
+        signal_state = TradingState.BUY
+        trade_state = TradingState.STAY
+
         length = len(df)
         # data 는 1년 후 (working 220일) 지표가 정상적으로 로딩 된다
         WORKING_DAY_PER_YEAR = 220
@@ -47,35 +50,46 @@ class StockStrategy:
             if df is None:
                 break
             candle = df.iloc[-1]
-            
-            if state == stockData.TradingState.BUY:
-                if self.bid_price(candle):
-                    if transaction_simul:
-                        bet_money = balance * min([kelly_rate, 1.0])
-                        amount = transaction.set_bid(candle, bet_money)
-                        if amount <= 0:
-                            continue
-                        temp = balance - (amount * candle['close'])
-                        if temp <= 0:
-                            continue
-                        balance = temp
-                    else:
-                        amount = transaction.set_bid(candle)
 
-                    state = stockData.TradingState.SELL
-                        
-            elif state == stockData.TradingState.SELL:
-                if self.ask_price(candle):
-                    transaction.set_ask(candle)
-                    trading_statement.add_transaction(transaction)
+            #신호 보기. 신호가 당일 종가라...      
+            if trade_state == TradingState.STAY:      
+                if signal_state == TradingState.BUY:
+                    if self.bid_price(candle):
+                        trade_state = TradingState.BUY
+
+                elif signal_state == TradingState.SELL:
+                    if self.ask_price(candle):
+                        trade_state = TradingState.SELL
+
+            # 신호가 나오면 다음날 매매함.
+            elif trade_state == TradingState.BUY:
+                if transaction_simul:
+                    bet_money = balance * min([kelly_rate, 1.0])
+                    amount = transaction.set_bid(candle, bet_money)
+                    if amount <= 0:
+                        continue
+                    temp = balance - (amount * candle['close'])
+                    if temp <= 0:
+                        continue
+                    balance = temp
+                else:
+                    amount = transaction.set_bid(candle)
+
+                signal_state = TradingState.SELL
+                trade_state = TradingState.STAY
+
+            elif trade_state == TradingState.SELL:
+                transaction.set_ask(candle)
+                trading_statement.add_transaction(transaction)
      
-                    if transaction_simul:
-                        balance = balance + transaction.calc_final_money()
-                        trading_statement.set_balance(balance)
+                if transaction_simul:
+                    balance = balance + transaction.calc_final_money()
+                    trading_statement.set_balance(balance)
 
-                    transaction = Transaction()
-                    state = stockData.TradingState.BUY
-                    
+                transaction = Transaction()     # 트렌젝션 초기화
+                signal_state = TradingState.BUY
+                trade_state = TradingState.STAY
+
         return trading_statement
 
     # 오늘 일자로 매수 신호 나왔나

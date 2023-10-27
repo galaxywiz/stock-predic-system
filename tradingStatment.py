@@ -143,9 +143,12 @@ class TradingStatement:
         last_candle = sd.chart_data_.iloc[-1]
         first_candle = sd.chart_data_.iloc[0]
         log = ""
+        
         if len(info) > 1:
             log += "+++++ [{0}] in [{1}] +++++\n".format(info, last_candle['date'])
-        
+            log += "++ 매수시 추천 배팅율 [{0:.2f}] => 10000 일경우 배팅금 [{1:.2f}]\n".format(
+                self.kelly_rate_ * 100, 10000 * self.kelly_rate_
+            )
         log += "! [{0}][{1}] 의 백테스팅 리포트\n".format(self.stock_data_.name_, self.trading_name_)      
         log += "+ [{0}] ~ [{1}] 기간 테스트.\n".format(
             first_candle['date'], last_candle['date'])
@@ -154,7 +157,7 @@ class TradingStatement:
         log += "+ [{0}][{1}] 의 승률[{2:.2f}], 거래수[{3}]\n".format(
             self.stock_data_.name_, self.trading_name_, win_rate * 100, trading_count)
         log += "+ 수익율[{0:.2f}]%, 손실율[{1:.2f}]% , 최적 배팅 비율[{2:.2f}]%\n".format(
-            profit_rate * 100, lose_rate * 100, self.kelly_rate_ *100)
+            profit_rate * 100, lose_rate * 100, self.kelly_rate_ * 100)
         log += "+ [{0}][{1}] 전략 [{2:.2f}]% 비율 배팅 시뮬시 => 총 금액[{3:,.2f}]".format(
             self.stock_data_.name_, self.trading_name_, self.kelly_rate_ * 100, self.balance_)
         return log

@@ -69,8 +69,9 @@ class StrategyStockDo(PredicStockDo):
     ask_signal_ = []
 
     def do(self):
+        self.__clear()
         self.__evaluation()
-        self.__print()
+        self.__print()        
 
     def back_test(self, strategy_template, sd, balance):
         strategy = strategy_template(stock_data=sd
@@ -131,3 +132,8 @@ class StrategyStockDo(PredicStockDo):
             log_summry = trading_statement.log_summry(info = "ask, sell, 매도 signal")
             logger.info(log_summry)
             sm.send_message(log_summry)
+
+    def __clear(self):
+        self.trading_history_.clear()
+        self.bid_signal_.clear()
+        self.ask_signal_.clear()

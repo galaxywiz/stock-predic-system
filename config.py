@@ -15,11 +15,13 @@ class StockMarketConfig:
 class USAStockMarketConfig(StockMarketConfig):
     def __init__(self):
         self.name_ = "USA"
-        telegram_token = "임의 토큰"
-        telegram_id = "임의 아이디"
+        
+        #https://api.telegram.org/bot1911337440:AAEC0drjJeXOuXrxWm2SEifa6-b0uepv5vQ/getUpdates 로 id 얻어오기
+        telegram_token = "1911337440:AAEC0drjJeXOuXrxWm2SEifa6-b0uepv5vQ"
+        telegram_id = "508897948"  ## 행복의 예보 채널 아이디
         line_token = "라인 토큰"
-        self.messenger_ = LineBot(token = line_token, id = telegram_id, name = self.name_)
-        #self.messenger_ = TelegramBot(token = telegram_token, id = telegram_id, name = self.name_)
+        #self.messenger_ = LineBot(token = line_token, id = telegram_id, name = self.name_)
+        self.messenger_ = TelegramBot(token = telegram_token, id = telegram_id, name = self.name_)
 
         self.is_debug_ = False
         self.DATE_FMT = "%Y-%m-%d"
@@ -54,11 +56,11 @@ class KoreaStockMarketConfig(StockMarketConfig):
     def __init__(self):
         self.name_ = "Korea"
 
-        telegram_token = "임의 토큰"
-        telegram_id = "임의 아이디"
+        telegram_token = "1922755861:AAEF40RK2o0iQahLDS1KVsTZ2f67hnD4tjU"
+        telegram_id = "508897948"
         line_token = "라인 토큰"
-        self.messenger_ = LineBot(token = line_token, id = telegram_id, name = self.name_)
-       # self.messenger_ = TelegramBot(token = telegram_token, id = telegram_id, name = self.name_)
+       # self.messenger_ = LineBot(token = line_token, id = telegram_id, name = self.name_)
+        self.messenger_ = TelegramBot(token = telegram_token, id = telegram_id, name = self.name_)
 
         self.is_debug_ = False
         self.DATE_FMT = "%Y-%m-%d"
@@ -93,8 +95,8 @@ class TaiwanStockMarketConfig(StockMarketConfig):
     def __init__(self):
         self.name_ = "Taiwan"
 
-        telegram_token = "임의 토큰"
-        telegram_id = "임의 아이디"
+        telegram_token = "6843658717:AAEMgheOqSoU6VWYlYkcxq1lbvYdpuvV5kI"
+        telegram_id = "508897948"
         line_token = "라인 토큰"
         #self.messenger_ = LineBot(token = line_token, id = telegram_id, name = self.name_)
         self.messenger_ = TelegramBot(token = telegram_token, id = telegram_id, name = self.name_)
@@ -131,8 +133,10 @@ class TaiwanStockMarketConfig(StockMarketConfig):
 #---------------------------------------------------------#
 class UpbitStockMarketConfig(StockMarketConfig):
     def __init__(self):
-        self.telegram_token_ = "1279149095:AAFCvfUi_6f7Cqf0cE6cRpQhyhODp06JPpQ"
-        self.telegram_id_ = "508897948"  ## 행복의 예보 채널 아이디
+        #https://api.telegram.org/bot643993591:AAEFRuLp7FlX40B1SdJgDjvga1QIdkUWUYU/getUpdates 로 id 얻어오기
+        telegram_token = "643993591:AAEFRuLp7FlX40B1SdJgDjvga1QIdkUWUYU"
+        telegram_id = "508897948"  ## 행복의 예보 채널 아이디
+        
         self.is_debug_ = False
         self.DATE_FMT = "%Y-%m-%d %H:%M:%S"
         self.stock_type_ = StockType.BITCOIN

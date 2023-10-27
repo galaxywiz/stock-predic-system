@@ -18,11 +18,11 @@ if __name__ == '__main__':
         # biancesMarket = stockMaket.StockMarket(
         #     config.BinanceStockMarketConfig(), real_trade=False)
         
-        taiwanMarket = stockMaket.StockMarket(
-            config.TaiwanStockMarketConfig(), real_trade=False)
+        market = stockMaket.StockMarket(
+            config.USAStockMarketConfig(), real_trade=False)
 
     #    botList.append(biancesMarket)
-        botList.append(taiwanMarket)
+        botList.append(market)
     else:
         usaMarket = stockMaket.StockMarket(
             config.USAStockMarketConfig(), real_trade=False)

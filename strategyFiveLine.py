@@ -76,9 +76,9 @@ class FiveLineStockStrategy(StockStrategy):
         dir = self.char_dir_ + "/five"
         if not os.path.exists(dir):
             os.makedirs(dir)
-        save_file = "%s/%s.png" % (dir, sd.name_)
-        plt.savefig(save_file)
+        self.chart_path_ = "%s/%s.png" % (dir, sd.name_)
+        plt.savefig(self.chart_path_)
         plt.close()
       
-        print("$ 차트 갱신 [%s] => [%s]" % (sd.name_, save_file))
+        print("$ 차트 갱신 [%s] => [%s]" % (sd.name_, self.chart_path_))
         

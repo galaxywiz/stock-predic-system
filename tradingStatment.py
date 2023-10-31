@@ -49,7 +49,9 @@ class TradingStatement:
         self.trading_ = trading
         self.kelly_rate_ = kelly_rate
         self.trading_name_ = trading.__class__.__name__
-
+        self.chart_path_ = ""
+        self.excel_file_ = ""
+        
     def add_transaction(self, tran):
         self.transactions_.append(tran)
 
@@ -132,8 +134,9 @@ class TradingStatement:
     
     def log_summry(self, info = ""):
         trading_count = self.total_trading_count() 
+        ticker_name = self.stock_data_.name_
         if trading_count <= 0:
-            log = "! [%s][%s] 의 백테스팅 거래 없음" % (self.stock_data_.name_, self.trading_name_)
+            log = "! [%s][%s] 의 백테스팅 거래 없음" % (ticker_name, self.trading_name_)
             return log
         
         win_rate = self.win_rating()
@@ -145,7 +148,7 @@ class TradingStatement:
         log = ""
         
         if len(info) > 1:
-            log += "+++++ [{0}] in [{1}] +++++\n".format(info, last_candle['date'])
+            log += "* [{0}][{1}][{2}] in [{3}]\n".format(info, ticker_name, self.trading_name_, last_candle['date'])
             log += "++ 매수시 추천 배팅율 [{0:.2f}] => 10000 일경우 배팅금 [{1:.2f}]\n".format(
                 self.kelly_rate_ * 100, 10000 * self.kelly_rate_
             )
@@ -223,8 +226,8 @@ class TradingStatement:
             os.makedirs(dir)
         sd = self.stock_data_
         df_chart_data = sd.chart_data_
-        save_file = "%s/%s_%s.xlsx" % (dir, sd.name_, self.trading_name_)
-        with pd.ExcelWriter(save_file, engine='openpyxl') as writer:
+        self.excel_file_ = "%s/%s_%s.xlsx" % (dir, sd.name_, self.trading_name_)
+        with pd.ExcelWriter(self.excel_file_, engine='openpyxl') as writer:
             df_summary.to_excel(writer, sheet_name='Summary', index=False)
             df_backtesting.to_excel(writer, sheet_name='Back testing', index=False)
             df_chart_data.to_excel(writer, sheet_name='Chart Data', index=False)

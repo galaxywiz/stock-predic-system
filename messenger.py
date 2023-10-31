@@ -57,10 +57,10 @@ class TelegramBot(Messenger):
         except:
             logger.error(traceback.format_exc())
 
-    def send_photo(self, image, message):
+    def send_photo(self, message, image_path):
         try:
             self.messenger_bot_.sendPhoto(
-                self.id_, photo=open(image, 'rb'), caption=message)
+                self.id_, photo=open(image_path, 'rb'), caption=message)
         except:
             logger.error(traceback.format_exc())
 

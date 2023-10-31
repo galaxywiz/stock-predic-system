@@ -6,6 +6,7 @@ from talib import MA_Type
 from tradingStatment import Transaction, TradingStatement
 
 class StockStrategy:
+    chart_path_ = ""
     def __init__(self, stock_data, char_dir):
         self.stock_data_ = stock_data
         self.char_dir_ = char_dir

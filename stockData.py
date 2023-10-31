@@ -35,7 +35,7 @@ class StockData:
         self.ticker_ = ticker
         self.name_ = name
         self.chart_data_ = df
-
+        self.having_ = 0
         # 구매 정보... strategy 에 전달 시킬 임시 변수
         self.buy_time_ = None
         # 매매 전략

@@ -101,10 +101,10 @@ class StockCrawler:
         return recomands
 
     def _load_from_file(self, targetList):
-        stockDf = DataFrame(columns = ("name", "ticker", "ranking"))
+        stockDf = DataFrame(columns = ("name", "ticker", "ranking", "having"))
         for text in targetList:
             tokens = text.split(':')
-            new_row = {'name': tokens[0], 'ticker': tokens[1], 'ranking': tokens[2]}
+            new_row = {'name': tokens[0], 'ticker': tokens[1], 'ranking': tokens[2], 'having': tokens[3]}
             stockDf.loc[-1] = new_row
             stockDf = stockDf.reset_index(drop=True)
         return stockDf

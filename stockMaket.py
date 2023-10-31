@@ -58,10 +58,10 @@ class StockMarket:
         self.messenger_.send_message(log)
     
     def send_chart_log(self, log, chart_path):
-        if chart_path == None:
+        if chart_path == None or len(chart_path) == 0:
             self.messenger_.send_message(log)
         else:
-            self.messenger_.send_photo(chart_path, log)
+            self.messenger_.send_photo(log, chart_path)
 
     #----------------------------------------------------------#
     # db 에 데이터 저장 하고 로딩!
@@ -112,7 +112,7 @@ class StockMarket:
         return True
         
     ## 주식 데이터 로딩 ##
-    def __load_stock_data(self, name, ticker, market_cap_ranking):  
+    def __load_stock_data(self, name, ticker, market_cap_ranking, having):  
         # 일단 web에서 데이터 조회 및 저장
         df = self.__get_stock_info_from_web_to_db(name, ticker)
         if df is None:
@@ -143,6 +143,7 @@ class StockMarket:
         sd.set_candle_fmt(self.DATE_FMT)
         sd.set_type(self.config_.stock_type_)
         sd.market_cap_ranking_ = int(market_cap_ranking)
+        sd.having_ = int(having)
 
         logger.info("[%s] data 로딩완료. last date [%s]" % (sd.name_, sd.now_candle_time()))
         print(df)
@@ -163,9 +164,11 @@ class StockMarket:
             name = row['name']
             ticker = row['ticker']
             market_cap_ranking = row['ranking']
+            having = row['having']
+
             if type(name) != str:
                 continue
-            self.__load_stock_data(name, ticker, market_cap_ranking)
+            self.__load_stock_data(name, ticker, market_cap_ranking, having)
             logger.info("[%s] ticker[%s] loading complet" %(name, ticker))
             if limit > 0:
                 if idxi > limit:

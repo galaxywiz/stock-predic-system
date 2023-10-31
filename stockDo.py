@@ -83,6 +83,8 @@ class StrategyStockDo(PredicStockDo):
             trading_statement = strategy.back_test(transaction_simul=True
                                                   , balance=balance
                                                   , kelly_rate=kelly_rate)
+            strategy.print_chart()
+            trading_statement.chart_path_ = strategy.chart_path_
             return trading_statement
         
         return None
@@ -111,10 +113,10 @@ class StrategyStockDo(PredicStockDo):
     ## 결과 출력하기
     def __print(self):
         sm = self.stock_market_
-        for sd in sm.stock_pool_.values():
-            for template in self.strategy_:
-                strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
-                strategy.print_chart()                
+        # for sd in sm.stock_pool_.values():
+        #     for template in self.strategy_:
+        #         strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
+        #         strategy.print_chart()                
 
         # 전체 결과 출력
         for trading_statement in self.trading_history_:
@@ -123,13 +125,16 @@ class StrategyStockDo(PredicStockDo):
  
         # 오늘 buy signal 출력
         for trading_statement in self.bid_signal_:
-            log_summry = trading_statement.log_summry(info = "bid, buy, 매수 signal")
+            log_summry = trading_statement.log_summry(info = "↑ ⓑⓤⓨ bid, 매수 signal")
             logger.info(log_summry)
+            sd = trading_statement.stock_data_
+            if sd.having_ != 0:
+                sm.send_chart_log(log_summry, trading_statement.chart_path_)
             sm.send_message(log_summry)
 
         # 오늘 sell signal 출력
         for trading_statement in self.ask_signal_:
-            log_summry = trading_statement.log_summry(info = "ask, sell, 매도 signal")
+            log_summry = trading_statement.log_summry(info = "↓ ⓢⓔⓛⓛ ask, 매도 signal")
             logger.info(log_summry)
             sm.send_message(log_summry)
 

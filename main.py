@@ -13,7 +13,7 @@ import config
 # 메인 함수 시작
 if __name__ == '__main__':
     botList = []
-    test = False
+    test = True
     if test:
         # biancesMarket = stockMaket.StockMarket(
         #     config.BinanceStockMarketConfig(), real_trade=False)

@@ -8,8 +8,8 @@ import numpy as np
 from stockStrategy import StockStrategy
 
 class FiveLineStockStrategy(StockStrategy):
-    def make_indicators(self, idx = 0):
-        df_copy = super().make_indicators(idx)
+    def make_indicators(self, start = 0, end = 0):
+        df_copy = super().make_indicators(start, end)
         if df_copy is None:
             return None
         df = df_copy.copy()
@@ -55,7 +55,8 @@ class FiveLineStockStrategy(StockStrategy):
     
     def print_chart(self):
         sd = self.stock_data_
-        df = self.make_indicators()
+        chart_len = len(sd.chart_data_)
+        df = self.make_indicators(start= chart_len - 100, end= chart_len)
         plt.close()
         # 한글 폰트 설정
         plt.rc('font', family='Malgun Gothic')   # 나눔 폰트를 사용하려면 해당 폰트 이름을 지정

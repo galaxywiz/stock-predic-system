@@ -12,13 +12,16 @@ class StockStrategy:
         self.char_dir_ = char_dir
 
     # 전략 만들기
-    def make_indicators(self, idx):
+    def make_indicators(self, start = 0, end = 0):
         sd = self.stock_data_
+        if start < 0:
+            start = 0
+
         lenth = len(sd.chart_data_)
-        if idx > 0:
-            if lenth < idx:
+        if end > 0:
+            if lenth < end:
                 return None
-            df = sd.chart_data_[:idx]  
+            df = sd.chart_data_[start:end]  
         else:
             df = sd.chart_data_
         return df
@@ -45,9 +48,10 @@ class StockStrategy:
 
         length = len(df)
         # data 는 1년 후 (working 220일) 지표가 정상적으로 로딩 된다
+        # 1회차 -> 10년전 ~9년전, 2회차 10년전 ~ 9년1일차 ..... n차 10년전 ~ 오늘
         WORKING_DAY_PER_YEAR = 220
         for idx in range(WORKING_DAY_PER_YEAR, length, 1):
-            df = self.make_indicators(idx)
+            df = self.make_indicators(end = idx)
             if df is None:
                 break
             candle = df.iloc[-1]
@@ -95,7 +99,7 @@ class StockStrategy:
 
     # 오늘 일자로 매수 신호 나왔나
     def bid_signal_today(self):
-        df = self.make_indicators(-1)
+        df = self.make_indicators(end = -1)
         if df is None:
             return False
         
@@ -107,7 +111,7 @@ class StockStrategy:
     
     # 오늘 일자로 매도 신호 나왔나
     def ask_signal_today(self):
-        df = self.make_indicators(-1)
+        df = self.make_indicators(end = -1)
         if df is None:
             return False
         

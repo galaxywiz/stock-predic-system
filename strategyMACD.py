@@ -1,5 +1,8 @@
 import os.path
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
+from matplotlib import font_manager, rc
+
 import stockData
 import talib.abstract as ta
 from talib import MA_Type
@@ -8,8 +11,8 @@ import numpy as np
 from stockStrategy import StockStrategy
 
 class MacdStockStrategy(StockStrategy):
-    def make_indicators(self, idx = 0):
-        df_copy = super().make_indicators(idx)
+    def make_indicators(self, start = 0, end = 0):
+        df_copy = super().make_indicators(start, end)
         if df_copy is None:
             return None
         df = df_copy.copy()
@@ -36,19 +39,28 @@ class MacdStockStrategy(StockStrategy):
             return True
         return False
 
+#https://bagal.tistory.com/263 참고
     def print_chart(self):
         sd = self.stock_data_
-        df = self.make_indicators()
+        chart_len = len(sd.chart_data_)
+        df = self.make_indicators(start= chart_len - 100, end= chart_len)
+
         plt.close()
         # 한글 폰트 설정
         plt.rc('font', family='Malgun Gothic')   # 나눔 폰트를 사용하려면 해당 폰트 이름을 지정
         plt.figure(figsize=(16, 8))
+        spec = gridspec.GridSpec(ncols=1, nrows=2)
+        
+        #종가 그리기
+        plt.subplot(spec[0])
+        plt.plot(df['date'], df['close'], label='close')
+        plt.legend()
 
-        for i in ['close', 'MACD', 'MACDSignal']:
+        #macd
+        plt.subplot(spec[1])
+        for i in ['MACD', 'MACDSignal']:
             plt.plot(df['date'], df[i], label=i)
-
-        plt.xlabel('date')
-        plt.ylabel("Price")
+        
         title = "%s(%s)" % (sd.name_, sd.ticker_)
         plt.title(title)
 

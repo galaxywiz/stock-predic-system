@@ -1,7 +1,11 @@
 import os.path
-import matplotlib.pyplot as plt
+
 from matplotlib import gridspec
 from matplotlib import font_manager, rc
+
+from mpl_finance import candlestick2_ohlc
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 import stockData
 import talib.abstract as ta
@@ -40,32 +44,63 @@ class MacdStockStrategy(StockStrategy):
         return False
 
 #https://bagal.tistory.com/263 참고
+# https://junpyopark.github.io/MACD_Plotting/
     def print_chart(self):
         sd = self.stock_data_
         chart_len = len(sd.chart_data_)
         df = self.make_indicators(start= chart_len - 100, end= chart_len)
 
-        plt.close()
-        # 한글 폰트 설정
-        plt.rc('font', family='Malgun Gothic')   # 나눔 폰트를 사용하려면 해당 폰트 이름을 지정
-        plt.figure(figsize=(16, 8))
-        spec = gridspec.GridSpec(ncols=1, nrows=2)
-        
-        #종가 그리기
-        plt.subplot(spec[0])
-        plt.plot(df['date'], df['close'], label='close')
-        plt.legend()
+        # 차트 레이아웃을 설정합니다.
+        fig = plt.figure(figsize=(12,10))
+        ax_main = plt.subplot2grid((5, 1), (0, 0), rowspan=3)
+        ax_sub = plt.subplot2grid((5, 1), (3, 0))
+        ax_sub2 = plt.subplot2grid((5, 1), (4, 0))
 
-        #macd
-        plt.subplot(spec[1])
-        for i in ['MACD', 'MACDSignal']:
-            plt.plot(df['date'], df[i], label=i)
-        
-        title = "%s(%s)" % (sd.name_, sd.ticker_)
-        plt.title(title)
+        index = df.index.astype('str')
+        # 메인차트를 그립니다.
+        ax_main.set_title('{0} Stock Price'.format(sd.name_),fontsize=20)
+        ax_main.plot(index, df['sma5'], label='MA5')
+        ax_main.plot(index, df['sma20'], label='MA20')
+        candlestick2_ohlc(ax_main, df['open'],df['high'],
+                        df['low'],df['close'],width=0.6)
 
-        # 범례 추가
-        plt.legend()
+        ax_main.legend(loc=5)
+
+        # 아래는 날짜 인덱싱을 위한 함수 입니다.
+        def mydate(x, pos):
+            try:
+                pos = int(round(x))
+                if 0 <= pos < len(index):
+                    return index[pos]
+                else:
+                    return ''
+            except ValueError:
+                return ''
+
+        # ax_sub 에 MACD 지표를 출력합니다.
+        ax_sub.set_title('MACD',fontsize=15)
+        df['MACD'].iloc[0] = 0
+        ax_sub.plot(index,df['MACD'], label='MACD')
+        ax_sub.plot(index,df['MACDSignal'], label='MACD Signal')
+        ax_sub.legend(loc=2)
+
+        # ax_sub2 에 MACD 오실레이터를 bar 차트로 출력합니다.
+        ax_sub2.set_title('MACD Oscillator',fontsize=15)
+        oscillator = df['MACDOsi']
+        oscillator.iloc[0] = 1e-16
+        ax_sub2.bar(list(index),list(oscillator.where(oscillator > 0)), 0.7)
+        ax_sub2.bar(list(index),list(oscillator.where(oscillator < 0)), 0.7)
+
+        # x 축을 조정합니다.
+        ax_main.xaxis.set_major_locator(ticker.MaxNLocator(7))
+        ax_main.xaxis.set_major_formatter(ticker.FuncFormatter(mydate))
+        ax_sub.xaxis.set_major_locator(ticker.MaxNLocator(7))
+        ax_sub2.xaxis.set_major_locator(ticker.MaxNLocator(7))
+        fig.autofmt_xdate()
+
+        # 차트끼리 충돌을 방지합니다.
+        plt.tight_layout()
+      #  plt.show()
 
         # 이미지 저장
         dir = self.char_dir_ + "/macd"

@@ -30,6 +30,8 @@ class USAStockMarketConfig(StockMarketConfig):
         self.crawler_ = USAStockCrawler()
         self.is_file_load_ = True
         self.list_file_name_ = "list_usa_stock.txt"
+        self.print_all_ = True
+        
         self.index_ticker_ = "SNP500"
         self.limit_list_size_ = 200
         self.prediction_ = True
@@ -70,6 +72,7 @@ class KoreaStockMarketConfig(StockMarketConfig):
         self.is_file_load_ = True
         self.list_file_name_ = "list_korea_stock.txt"
         self.index_ticker_ = "코스피"
+        self.print_all_ = True
 
         self.limit_list_size_ = 250
         self.prediction_ = True
@@ -109,6 +112,7 @@ class TaiwanStockMarketConfig(StockMarketConfig):
         self.is_file_load_ = True
         self.list_file_name_ = "list_taiwan_stock.txt"
         self.index_ticker_ = "上市"
+        self.print_all_ = True
 
         self.limit_list_size_ = 250
         self.prediction_ = True
@@ -147,6 +151,7 @@ class UpbitStockMarketConfig(StockMarketConfig):
 
         self.limit_list_size_ = -1
         self.prediction_ = False
+        self.print_all_ = True
 
         self.day_price_db_ = DayPriceFloatDB("CoinData.db", "day_price")
         self.day_pre_db_ = DayPreDB("CoinDayPre.db", "TODAY_STOCK_LIST")    
@@ -181,6 +186,7 @@ class BinanceStockMarketConfig(StockMarketConfig):
         self.crawler_ = BinanceCoinCrawler()
         self.is_file_load_ = False
         self.list_file_name_ = "list_binance_coin.txt"
+        self.print_all_ = True
 
         self.limit_list_size_ = -1
         self.prediction_ = False

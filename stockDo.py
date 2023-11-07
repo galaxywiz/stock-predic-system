@@ -113,6 +113,8 @@ class StrategyStockDo(PredicStockDo):
     ## 결과 출력하기
     def __print(self):
         sm = self.stock_market_
+        config = sm.config_
+        all_print = config.print_all_
         # for sd in sm.stock_pool_.values():
         #     for template in self.strategy_:
         #         strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
@@ -126,7 +128,7 @@ class StrategyStockDo(PredicStockDo):
         # 오늘 buy signal 출력
         for trading_statement in self.bid_signal_:
             sd = trading_statement.stock_data_
-            if sd.having_ != 0:
+            if sd.having_ != 0 or all_print:
                 log_summry = trading_statement.log_summry(info = "↑ ⓑⓤⓨ bid, 매수 signal")
                 sm.send_chart_log(log_summry, trading_statement.chart_path_)
                 logger.info(log_summry)
@@ -135,7 +137,7 @@ class StrategyStockDo(PredicStockDo):
         # 오늘 sell signal 출력
         for trading_statement in self.ask_signal_:
             sd = trading_statement.stock_data_            
-            if sd.having_ != 0:
+            if sd.having_ != 0 or all_print:
                 log_summry = trading_statement.log_summry(info = "↓ ⓢⓔⓛⓛ ask, 매도 signal")
                 sm.send_chart_log(log_summry, trading_statement.chart_path_)
                 logger.info(log_summry)

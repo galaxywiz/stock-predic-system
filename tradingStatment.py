@@ -148,21 +148,20 @@ class TradingStatement:
         log = ""
         
         if len(info) > 1:
-            log += "* [{0}][{1}][{2}] in [{3}]\n".format(info, ticker_name, self.trading_name_, last_candle['date'])
-            log += "++ 매수시 추천 배팅율 [{0:.2f}] => 10000 일경우 배팅금 [{1:.2f}]\n".format(
-                self.kelly_rate_ * 100, 10000 * self.kelly_rate_
-            )
+            log += "———————————————————————\n"
+            log += "SIGNAL:[{0}]\n".format(info)
+            log += "종목:[{0}]\n".format(ticker_name)
+            log += "전략:[{0}] in [{1}]\n".format( self.trading_name_, last_candle['date'])
+            log += "매수시 배팅율 [{0:.2f}]%\n".format(self.kelly_rate_ * 100)
+            log += " => 10000 일경우 배팅금 [{0:.2f}]\n".format(10000 * self.kelly_rate_)
+            log += "———————————————————————\n"
+
         log += "! [{0}][{1}] 의 백테스팅 리포트\n".format(self.stock_data_.name_, self.trading_name_)      
-        log += "+ [{0}] ~ [{1}] 기간 테스트.\n".format(
-            first_candle['date'], last_candle['date'])
-        log += "+ 자본금[{0:,.2f}] -> 총이익[{1:,.2f}]\n".format(
-            self.init_balance_, self.total_prtofit())
-        log += "+ [{0}][{1}] 의 승률[{2:.2f}], 거래수[{3}]\n".format(
-            self.stock_data_.name_, self.trading_name_, win_rate * 100, trading_count)
-        log += "+ 수익율[{0:.2f}]%, 손실율[{1:.2f}]% , 최적 배팅 비율[{2:.2f}]%\n".format(
-            profit_rate * 100, lose_rate * 100, self.kelly_rate_ * 100)
-        log += "+ [{0}][{1}] 전략 [{2:.2f}]% 비율 배팅 시뮬시 => 총 금액[{3:,.2f}]".format(
-            self.stock_data_.name_, self.trading_name_, self.kelly_rate_ * 100, self.balance_)
+        log += "+ [{0}] ~ [{1}] 기간.\n".format(first_candle['date'], last_candle['date'])
+        log += "+ 자본금[{0:,.2f}] -> 총이익[{1:,.2f}]\n".format(self.init_balance_, self.total_prtofit())
+        log += "+ 승률[{0:.2f}]%, 총거래수[{1}]\n".format(win_rate * 100, trading_count)
+        log += "+ 수익율[{0:.2f}]%, 손실율[{1:.2f}]%, 최적배팅[{2:.2f}]%\n".format(profit_rate * 100, lose_rate * 100, self.kelly_rate_ * 100)
+        log += "+ [{0:.2f}]% 비율 배팅 시뮬시 => 총 금액[{1:,.2f}]".format(self.kelly_rate_ * 100, self.balance_)
         return log
         
     def log(self):

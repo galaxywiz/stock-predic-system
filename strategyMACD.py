@@ -1,16 +1,12 @@
 import os.path
 
-from matplotlib import gridspec
-from matplotlib import font_manager, rc
-
-from mpl_finance import candlestick2_ohlc
+import mplfinance as mpf  # mpl_finance 대신 mplfinance 사용
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 
-import stockData
 import talib.abstract as ta
 from talib import MA_Type
-from sklearn import linear_model
+
+import pandas as pd
 import numpy as np
 from stockStrategy import StockStrategy
 
@@ -47,68 +43,46 @@ class MacdStockStrategy(StockStrategy):
 # https://junpyopark.github.io/MACD_Plotting/
     def print_chart(self):
         sd = self.stock_data_
-        chart_len = len(sd.chart_data_)
-        df = self.make_indicators(start= chart_len - 100, end= chart_len)
-
-        # 차트 레이아웃을 설정합니다.
-        fig = plt.figure(figsize=(12,10))
-        ax_main = plt.subplot2grid((5, 1), (0, 0), rowspan=3)
-        ax_sub = plt.subplot2grid((5, 1), (3, 0))
-        ax_sub2 = plt.subplot2grid((5, 1), (4, 0))
-
-        index = df.index.astype('str')
-        # 메인차트를 그립니다.
-        ax_main.set_title('{0} Stock Price'.format(sd.name_),fontsize=20)
-        ax_main.plot(index, df['sma5'], label='MA5')
-        ax_main.plot(index, df['sma20'], label='MA20')
-        candlestick2_ohlc(ax_main, df['open'],df['high'],
-                        df['low'],df['close'],width=0.6)
-
-        ax_main.legend(loc=5)
-
-        # 아래는 날짜 인덱싱을 위한 함수 입니다.
-        def mydate(x, pos):
-            try:
-                pos = int(round(x))
-                if 0 <= pos < len(index):
-                    return index[pos]
-                else:
-                    return ''
-            except ValueError:
-                return ''
-
-        # ax_sub 에 MACD 지표를 출력합니다.
-        ax_sub.set_title('MACD',fontsize=15)
-        df['MACD'].iloc[0] = 0
-        ax_sub.plot(index,df['MACD'], label='MACD')
-        ax_sub.plot(index,df['MACDSignal'], label='MACD Signal')
-        ax_sub.legend(loc=2)
-
-        # ax_sub2 에 MACD 오실레이터를 bar 차트로 출력합니다.
-        ax_sub2.set_title('MACD Oscillator',fontsize=15)
-        oscillator = df['MACDOsi']
-        oscillator.iloc[0] = 1e-16
-        ax_sub2.bar(list(index),list(oscillator.where(oscillator > 0)), 0.7)
-        ax_sub2.bar(list(index),list(oscillator.where(oscillator < 0)), 0.7)
-
-        # x 축을 조정합니다.
-        ax_main.xaxis.set_major_locator(ticker.MaxNLocator(7))
-        ax_main.xaxis.set_major_formatter(ticker.FuncFormatter(mydate))
-        ax_sub.xaxis.set_major_locator(ticker.MaxNLocator(7))
-        ax_sub2.xaxis.set_major_locator(ticker.MaxNLocator(7))
-        fig.autofmt_xdate()
-
-        # 차트끼리 충돌을 방지합니다.
-        plt.tight_layout()
-      #  plt.show()
-
-        # 이미지 저장
+        
+        # 이미지 저장 파일
         dir = self.char_dir_ + "/macd"
         if not os.path.exists(dir):
             os.makedirs(dir)
         self.chart_path_ = "%s/%s.png" % (dir, sd.name_)
-        plt.savefig(self.chart_path_)
-        plt.close()
-      
+
+        chart_len = len(sd.chart_data_)
+        c_len = self.chart_len_
+        df = self.make_indicators(start=chart_len - c_len * 2, end=chart_len)
+        df = df[-c_len:]
+
+        # ------------- 차트 그리기 ---------------- #
+        plt.rc('font', family='Malgun Gothic')
+
+        df.set_index('date', inplace=True)
+
+        # 별도의 패널로 MACD 관련 지표를 분리하여 표시
+        apds = [
+            mpf.make_addplot(df['sma5'], color='magenta', ylabel='Price/SMA5'),
+            mpf.make_addplot(df['sma20'], color='cyan', ylabel='Price/SMA20'),
+            mpf.make_addplot(df['MACD'], panel=1, color='green', ylabel='MACD'),
+            mpf.make_addplot(df['MACDSignal'], panel=1, color='red'),
+            mpf.make_addplot(df['MACDOsi'], type='bar', panel=2, color='purple', ylabel='Oscillator')
+        ]
+        # 사용자 정의 시장 색상과 스타일을 생성합니다.
+        mc = mpf.make_marketcolors(up='red', down='blue', edge='inherit', wick='inherit', volume='inherit')
+        s = mpf.make_mpf_style(gridstyle='-', gridcolor='grey', y_on_right=False, marketcolors=mc)
+
+        # 패널의 높이 설정
+        panel_ratios = (6, 3, 2)  # 주식 차트, MACD, Oscillator의 높이 비율을 설정합니다.
+        
+        # 캔들스틱 차트와 추가 지표를 함께 플롯합니다.
+        mpf.plot(df, type='candle', addplot=apds, panel_ratios=panel_ratios, 
+                figratio=(20, 10),  # figratio를 사용하여 차트의 비율을 조절합니다.
+                style=s,#'charles',
+                title='{0} Stock Price'.format(sd.name_), 
+                datetime_format='%Y-%m-%d',
+                tight_layout=False, 
+                savefig=self.chart_path_)
+
         print("$ 차트 갱신 [%s] => [%s]" % (sd.name_, self.chart_path_))
         

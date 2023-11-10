@@ -21,19 +21,20 @@ class StockMarket:
         self.stock_strategy_ = {}
         self.time_line_ = datetime.now().strftime("%Y-%m-%d")
         self.config_ = market_config
+        self.name_ = self.config_.name_
         
         self.messenger_ = self.config_.messenger_
         self.DATE_FMT = market_config.DATE_FMT
-        self.chart_dir_ = ("./chart/%s" % self.config_.name_)
+        self.chart_dir_ = ("./chart/%s" % self.name_)
 
         locale.setlocale(locale.LC_ALL, '')
         now = datetime.now() - timedelta(days=1)  
         self.last_crawling_time_ = now
  
         self.get_stocks_list()
-
-        msg = "%s is ready" % (self.config_.name_)
-        self.send_message(msg)
+        
+        # msg = "%s is ready" % (self.name_)
+        # self.send_message(msg)
 
     def __process(self):
         self.update_stocks()
@@ -46,11 +47,11 @@ class StockMarket:
             if elpe.total_seconds() < (60*60):  # 1시간 마다 체크
                 return
 
-            logger.info("### [%s] market run. check [%d] stocks" % (self.config_.name_, len(self.stock_pool_)))
+            logger.info("### [%s] market run. check [%d] stocks" % (self.name_, len(self.stock_pool_)))
             self.last_crawling_time_ = now
             self.__process()
             self.copy_db()
-            logger.info("### [%s] market job completed." % self.config_.name_)
+            logger.info("### [%s] market job completed." % self.name_)
 
     #----------------------------------------------------------#
     # 메시지 전송용

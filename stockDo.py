@@ -1,4 +1,7 @@
 import logger
+import datetime
+from datetime import datetime
+
 import stockPredic as sp
 from printChart import PrintChart
 import util as u
@@ -115,10 +118,16 @@ class StrategyStockDo(PredicStockDo):
         sm = self.stock_market_
         config = sm.config_
         all_print = config.print_all_
-        # for sd in sm.stock_pool_.values():
-        #     for template in self.strategy_:
-        #         strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
-        #         strategy.print_chart()                
+        now = datetime.now()
+        log = "☆◇△ {0} - {1}".format(sm.name_, now.strftime(sm.DATE_FMT))
+        sm.send_message(log)
+        
+        for sd in sm.stock_pool_.values():
+            for template in self.strategy_:
+                strategy = template(stock_data=sd, char_dir=self.stock_market_.chart_dir_)
+                strategy.print_chart()  
+                log_text = "stock: {0}\nstrategy: {1}".format(sd.name_, strategy.__class__.__name__ )
+                sm.send_chart_log(log_text, strategy.chart_path_)              
 
         # 전체 결과 출력
         for trading_statement in self.trading_history_:
@@ -129,7 +138,7 @@ class StrategyStockDo(PredicStockDo):
         for trading_statement in self.bid_signal_:
             sd = trading_statement.stock_data_
             if sd.having_ != 0 or all_print:
-                log_summry = trading_statement.log_summry(info = "↑ ⓑⓤⓨ bid, 매수 signal")
+                log_summry = trading_statement.log_summry(info = "↑ ⓑⓤⓨ bid, 매수 ⓑⓤⓨ ↑")
                 sm.send_chart_log(log_summry, trading_statement.chart_path_)
                 logger.info(log_summry)
             #sm.send_message(log_summry)
@@ -138,7 +147,7 @@ class StrategyStockDo(PredicStockDo):
         for trading_statement in self.ask_signal_:
             sd = trading_statement.stock_data_            
             if sd.having_ != 0 or all_print:
-                log_summry = trading_statement.log_summry(info = "↓ ⓢⓔⓛⓛ ask, 매도 signal")
+                log_summry = trading_statement.log_summry(info = "↓ ⓢⓔⓛⓛ ask, 매도 ⓢⓔⓛⓛ ↓")
                 sm.send_chart_log(log_summry, trading_statement.chart_path_)
                 logger.info(log_summry)
 

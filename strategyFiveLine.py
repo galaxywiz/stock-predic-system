@@ -1,10 +1,15 @@
 import os.path
+
+import pandas as pd
+import numpy as np
+
+import mplfinance as mpf  # mpl_finance 대신 mplfinance 사용
 import matplotlib.pyplot as plt
-import stockData
+
 import talib.abstract as ta
 from talib import MA_Type
+
 from sklearn import linear_model
-import numpy as np
 from stockStrategy import StockStrategy
 
 class FiveLineStockStrategy(StockStrategy):
@@ -55,31 +60,34 @@ class FiveLineStockStrategy(StockStrategy):
     
     def print_chart(self):
         sd = self.stock_data_
-        chart_len = len(sd.chart_data_)
-        df = self.make_indicators(start= chart_len - 100, end= chart_len)
-        plt.close()
-        # 한글 폰트 설정
-        plt.rc('font', family='Malgun Gothic')   # 나눔 폰트를 사용하려면 해당 폰트 이름을 지정
-        plt.figure(figsize=(16, 8))
-
-        for i in ['close', 'priceTL', 'TL-2SD', 'TL-SD', 'TL+SD', 'TL+2SD']:
-            plt.plot(df['date'], df[i], label=i)
-
-        plt.xlabel('date')
-        plt.ylabel("Price")
-        title = "%s(%s)" % (sd.name_, sd.ticker_)
-        plt.title(title)
-
-        # 범례 추가
-        plt.legend()
-
+        
         # 이미지 저장
         dir = self.char_dir_ + "/five"
         if not os.path.exists(dir):
             os.makedirs(dir)
         self.chart_path_ = "%s/%s.png" % (dir, sd.name_)
-        plt.savefig(self.chart_path_)
-        plt.close()
-      
+
+        chart_len = len(sd.chart_data_)
+        c_len = self.chart_len_
+        df = self.make_indicators(start=chart_len - c_len * 2, end=chart_len)
+        df = df[-c_len:]
+
+        # ------------- 차트 그리기 ---------------- #
+        plt.rc('font', family='Malgun Gothic')
+
+        df.set_index('date', inplace=True)
+        add_plot = []
+
+        for i in ['priceTL', 'TL-2SD', 'TL-SD', 'TL+SD', 'TL+2SD']:
+            add_plot.append(mpf.make_addplot(df[i], ylabel=i))
+
+        # 캔들스틱 차트와 볼린저 밴드 플롯
+        mpf.plot(df, type='candle', addplot=add_plot, 
+                figratio=(20, 10),  # figratio를 사용하여 차트의 비율을 조절합니다.
+                style='charles',
+                title='{0} Stock Price'.format(sd.name_), 
+                datetime_format='%Y-%m-%d',
+                savefig=self.chart_path_)
+        
         print("$ 차트 갱신 [%s] => [%s]" % (sd.name_, self.chart_path_))
         

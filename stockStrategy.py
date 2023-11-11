@@ -34,9 +34,66 @@ class StockStrategy:
     def ask_price(self, candle):
         pass
     
+    #신호 보기. 신호가 당일 종가라...      
+    def __check_singal(self, candle, signal_state):    
+        if signal_state == TradingState.BUY:
+            if self.bid_price(candle):
+                return TradingState.BUY
+
+        elif signal_state == TradingState.SELL:
+            if self.ask_price(candle):
+                return TradingState.SELL
+                
+        return TradingState.STAY
+
+    # kelly_rate 를 매 순간 마다 계산 해 보는게 좋을듯...
+    def calc_kelly_rate(self, df):
+        length = len(df)
+        trading_statement = TradingStatement(sd=self.stock_data_
+                                             ,trading=self)
+        transaction = Transaction()
+        
+        signal_state = TradingState.BUY
+        trade_state = TradingState.STAY
+
+        # data 는 1년 후 (working 220일) 지표가 정상적으로 로딩 된다
+        # 1회차 -> 10년전 ~9년전, 2회차 10년전 ~ 9년1일차 ..... n차 10년전 ~ 오늘
+        WORKING_DAY_PER_YEAR = 220
+        for idx in range(WORKING_DAY_PER_YEAR, length, 1):
+            df = self.make_indicators(end = idx)
+            if df is None:
+                break
+            candle = df.iloc[-1]
+            
+            #신호 보기. 신호가 당일 종가라...      
+            if trade_state == TradingState.STAY:      
+                trade_state = self.__check_singal(candle, signal_state)
+                continue                
+
+            # 신호가 나오면 다음날 매매함.
+            elif trade_state == TradingState.BUY:
+                transaction.set_bid(candle)
+                signal_state = TradingState.SELL
+                trade_state = TradingState.STAY
+                continue
+
+            elif trade_state == TradingState.SELL:
+                transaction.set_ask(candle)
+                trading_statement.add_transaction(transaction)
+     
+                transaction = Transaction()     # 트렌젝션 초기화
+                signal_state = TradingState.BUY
+                trade_state = TradingState.STAY
+                continue
+
+        kelly_rate = trading_statement.optimal_bet_ratio()
+        return kelly_rate
+    
     # kelly_rate 를 매 순간 마다 계산 해 보는게 좋을듯...
     def back_test(self, transaction_simul=True, balance=0, kelly_rate=0):
         df = self.stock_data_.chart_data_
+        length = len(df)
+
         trading_statement = TradingStatement(sd=self.stock_data_
                                              , trading=self
                                              , balance=balance
@@ -46,7 +103,8 @@ class StockStrategy:
         signal_state = TradingState.BUY
         trade_state = TradingState.STAY
 
-        length = len(df)
+    #    kelly_rate = self.calc_kelly_rate(self, df)
+    #    self.simulating(self, df, kelly_rate)
         # data 는 1년 후 (working 220일) 지표가 정상적으로 로딩 된다
         # 1회차 -> 10년전 ~9년전, 2회차 10년전 ~ 9년1일차 ..... n차 10년전 ~ 오늘
         WORKING_DAY_PER_YEAR = 220
@@ -55,16 +113,11 @@ class StockStrategy:
             if df is None:
                 break
             candle = df.iloc[-1]
-
+            
             #신호 보기. 신호가 당일 종가라...      
             if trade_state == TradingState.STAY:      
-                if signal_state == TradingState.BUY:
-                    if self.bid_price(candle):
-                        trade_state = TradingState.BUY
-
-                elif signal_state == TradingState.SELL:
-                    if self.ask_price(candle):
-                        trade_state = TradingState.SELL
+                trade_state = self.__check_singal(candle, signal_state)
+                continue                
 
             # 신호가 나오면 다음날 매매함.
             elif trade_state == TradingState.BUY:
@@ -78,10 +131,11 @@ class StockStrategy:
                         continue
                     balance = temp
                 else:
-                    amount = transaction.set_bid(candle)
+                    transaction.set_bid(candle)
 
                 signal_state = TradingState.SELL
                 trade_state = TradingState.STAY
+                continue
 
             elif trade_state == TradingState.SELL:
                 transaction.set_ask(candle)
@@ -94,7 +148,7 @@ class StockStrategy:
                 transaction = Transaction()     # 트렌젝션 초기화
                 signal_state = TradingState.BUY
                 trade_state = TradingState.STAY
-
+                continue
         return trading_statement
 
     # 오늘 일자로 매수 신호 나왔나

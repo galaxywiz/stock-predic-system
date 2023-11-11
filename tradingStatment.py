@@ -40,7 +40,7 @@ class Transaction:
         return profit_rate
 
 class TradingStatement:
-    def __init__(self, sd, trading, balance, kelly_rate):
+    def __init__(self, sd, trading, balance=0, kelly_rate=0.0):
         self.stock_data_ = sd
         self.transactions_ = []
         self.balance_ = balance
@@ -148,13 +148,13 @@ class TradingStatement:
         log = ""
         
         if len(info) > 1:
-            log += "———————————————————————\n"
+            log += "——————————————————\n"
             log += "SIGNAL:[{0}]\n".format(info)
             log += "종목:[{0}]\n".format(ticker_name)
             log += "전략:[{0}] in [{1}]\n".format( self.trading_name_, last_candle['date'])
             log += "매수시 배팅율 [{0:.2f}]%\n".format(self.kelly_rate_ * 100)
             log += " => 10000 일경우 배팅금 [{0:.2f}]\n".format(10000 * self.kelly_rate_)
-            log += "———————————————————————\n"
+            log += "——————————————————\n"
 
         log += "! [{0}][{1}] 의 백테스팅 리포트\n".format(self.stock_data_.name_, self.trading_name_)      
         log += "+ [{0}] ~ [{1}] 기간.\n".format(first_candle['date'], last_candle['date'])

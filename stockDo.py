@@ -81,6 +81,9 @@ class StrategyStockDo(PredicStockDo):
                                      , char_dir=self.stock_market_.chart_dir_)
         
         trading_statement = strategy.back_test(balance=balance)
+        # 텔레그램 전송을 위해 미리 차트 그리고 경로 설정
+        strategy.print_chart()
+        trading_statement.chart_path_ = strategy.chart_path_
         return trading_statement
     
     # 전략을 투입할시 승률을 구한다

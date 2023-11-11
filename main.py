@@ -6,6 +6,9 @@
 #    게임 시작은 3년전 부터 시작, -> 1일 1데이터 쌓기로 진행
 # 2. agent 는 특정 금액만 가지고 buy / sell 로 주식 매수 매입
 # 3. dqn 으로 agent 가 최적의 주식으로 돈을 가장 많이 버는 모델 만들어 보기
+from datetime import datetime
+from datetime import timedelta
+import time
 
 import stockMaket
 import config
@@ -13,16 +16,24 @@ import config
 # 메인 함수 시작
 if __name__ == '__main__':
     botList = []
-    test = False
+    test = True
     if test:
         # biancesMarket = stockMaket.StockMarket(
         #     config.BinanceStockMarketConfig(), real_trade=False)
         
-        market = stockMaket.StockMarket(
+        usaMarket = stockMaket.StockMarket(
             config.USAStockMarketConfig(), real_trade=False)
+        koreaMarket = stockMaket.StockMarket(
+            config.KoreaStockMarketConfig(), real_trade=False)
+        taiwanMarket = stockMaket.StockMarket(
+            config.TaiwanStockMarketConfig(), real_trade=False)
 
-    #    botList.append(biancesMarket)
-        botList.append(market)
+        botList.append(usaMarket)
+        botList.append(koreaMarket)
+        botList.append(taiwanMarket)
+        for bot in botList:
+            bot.check_strategy()
+    #    bot.predic_stock()
     else:
         usaMarket = stockMaket.StockMarket(
             config.USAStockMarketConfig(), real_trade=False)
@@ -30,18 +41,14 @@ if __name__ == '__main__':
             config.KoreaStockMarketConfig(), real_trade=False)
         taiwanMarket = stockMaket.StockMarket(
             config.TaiwanStockMarketConfig(), real_trade=False)
-        
+
         botList.append(usaMarket)
         botList.append(koreaMarket)
         botList.append(taiwanMarket)
-
-    for bot in botList:
-        bot.check_strategy()
-    #    bot.predic_stock()
       
-    # while(True):
-    #     now = time.localtime()
-    #     for stockMarket in botList:
-    #         stockMarket.do()
+    while(True):
+        now = datetime.now()
+        for stockMarket in botList:
+            stockMarket.do()
 
-    #     time.sleep(1)
+        time.sleep(1)

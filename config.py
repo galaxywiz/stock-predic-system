@@ -1,207 +1,92 @@
-from datetime import datetime
-from datetime import timedelta
+import configparser
 import time
 
-from stockCrawler import USAStockCrawler, FutureCrawler, KoreaStockCrawler, TaiwanStockCrawler, BinanceCoinCrawler, UpbitCoinCrawler
+from stockCrawler import USAStockCrawler, FutureCrawler, KoreaStockCrawler, TaiwanStockCrawler, BinanceCoinCrawler
 from sqliteStockDB import DayPriceDB, DayPriceFloatDB, DayPreDB
 from stockData import StockData, TradingState, StockType
 from messenger import TelegramBot, LineBot
 # 봇 설정
 class StockMarketConfig:
+    def __init__(self):
+        self.load_config("config.conf")
+
+    def set_config(self, config_file, cheader):
+        config = configparser.ConfigParser()
+        with open(config_file, 'r', encoding='utf-8') as f:
+            config.read_file(f)      
+        self.name_ = config[cheader]['name']
+        #https://api.telegram.org/bot1911337440:AAEC0drjJeXOuXrxWm2SEifa6-b0uepv5vQ/getUpdates 로 id 얻어오기
+        telegram_token = config[cheader]['telegram_token']
+        telegram_id = config[cheader]['telegram_id']
+        line_token = config[cheader]['line_token']
+
+        # 여기서 메신저 선택 로직을 추가할 수 있습니다
+        self.messenger_ = TelegramBot(token=telegram_token, id=telegram_id, name=self.name_)
+
+        self.is_debug_ = config.getboolean(cheader, 'is_debug')
+        self.DATE_FMT = config[cheader]['DATE_FMT']
+        self.stock_type_ = getattr(StockType, config[cheader]['stock_type'])
+        
+        crawler = config[cheader]['crawler_type']
+        if crawler == 'USAStockCrawler':
+            self.crawler_ = USAStockCrawler()
+        elif crawler == 'KoreaStockCrawler':
+            self.crawler_ = KoreaStockCrawler()
+        elif crawler == 'TaiwanStockCrawler':
+            self.crawler_ = TaiwanStockCrawler()
+        elif crawler == 'BinanceCoinCrawler':
+            self.crawler_ = BinanceCoinCrawler()
+            
+        self.is_file_load_ = config.getboolean(cheader, 'is_file_load')
+        self.list_file_name_ = config[cheader]['list_file_name']
+        self.print_all_ = config.getboolean(cheader, 'print_all')
+ 
+        self.index_ticker_ = config[cheader]['index_ticker']
+        self.limit_list_size_ = config.getint(cheader, 'limit_list_size')
+        self.prediction_ = config.getboolean(cheader, 'prediction')
+        
+        db_name = config[cheader]['day_price_db_name']
+        db_table = config[cheader]['day_price_db_table']
+        self.day_price_db_ = DayPriceFloatDB(db_name, db_table)
+
+        pre_name = config[cheader]['day_pre_db_name']
+        pre_table = config[cheader]['day_pre_db_table']
+        self.day_pre_db_ = DayPreDB(pre_name, pre_table)    
+    
+        self.char_dir_ = config[cheader]['chart_dir']
+        self.base_web_site_ = config[cheader]['base_web_site']
+        self.balance_ = config.getint(cheader, 'balance')
+
+        self.start_hour_ = config[cheader]['start_hour']
+        self.start_min_ = config[cheader]['start_min']
+
     def crawling_time(self):
-        pass
+        now = time.localtime()
+        if 0 < now.tm_wday and now.tm_wday < 6:
+            if now.tm_hour == self.start_hour_ and now.tm_min >= self.start_min_: 
+                return True
+        return False
 
 #---------------------------------------------------------#
 class USAStockMarketConfig(StockMarketConfig):
-    def __init__(self):
-        self.name_ = "USA"
-        
-        #https://api.telegram.org/bot1911337440:AAEC0drjJeXOuXrxWm2SEifa6-b0uepv5vQ/getUpdates 로 id 얻어오기
-        telegram_token = "1911337440:AAEC0drjJeXOuXrxWm2SEifa6-b0uepv5vQ"
-        telegram_id = "508897948"  ## 행복의 예보 채널 아이디
-        line_token = "라인 토큰"
-        #self.messenger_ = LineBot(token = line_token, id = telegram_id, name = self.name_)
-        self.messenger_ = TelegramBot(token = telegram_token, id = telegram_id, name = self.name_)
-
-        self.is_debug_ = False
-        self.DATE_FMT = "%Y-%m-%d"
-        self.stock_type_ = StockType.STOCK_USA
-
-        self.crawler_ = USAStockCrawler()
-        self.is_file_load_ = True
-        self.list_file_name_ = "list_usa_stock.txt"
-        self.print_all_ = True
-        
-        self.index_ticker_ = "SNP500"
-        self.limit_list_size_ = 200
-        self.prediction_ = True
-
-        self.day_price_db_ = DayPriceFloatDB("USAStockData.db","day_price")
-        self.day_pre_db_ = DayPreDB("USADayPre.db", "TODAY_STOCK_LIST")    
-    
-        self.char_dir_ = "chart_USA/"
-        self.base_web_site_ = "https://finance.yahoo.com/quote/%s"
-        self.time_frame_ = 5
-        self.balance_ = 10000
-
-    def crawling_time(self):
-        now = time.localtime()
-        start_hour = 7
-        start_min = 0
-        if 0 < now.tm_wday and now.tm_wday < 6:
-            if now.tm_hour == start_hour and now.tm_min >= start_min: 
-                return True
-        return False
+    def load_config(self, config_file):
+        cheader = 'USAStockMarketConfig'
+        self.set_config(config_file, cheader)        
 
 #---------------------------------------------------------#
 class KoreaStockMarketConfig(StockMarketConfig):
-    def __init__(self):
-        self.name_ = "Korea"
+    def load_config(self, config_file):
+        cheader = 'KoreaStockMarketConfig'
+        self.set_config(config_file, cheader)  
 
-        telegram_token = "1922755861:AAEF40RK2o0iQahLDS1KVsTZ2f67hnD4tjU"
-        telegram_id = "508897948"
-        line_token = "라인 토큰"
-       # self.messenger_ = LineBot(token = line_token, id = telegram_id, name = self.name_)
-        self.messenger_ = TelegramBot(token = telegram_token, id = telegram_id, name = self.name_)
-
-        self.is_debug_ = False
-        self.DATE_FMT = "%Y-%m-%d"
-        self.stock_type_ = StockType.STOCK_KOREA
-
-        self.crawler_ = KoreaStockCrawler()
-        self.is_file_load_ = True
-        self.list_file_name_ = "list_korea_stock.txt"
-        self.index_ticker_ = "코스피"
-        self.print_all_ = True
-
-        self.limit_list_size_ = 250
-        self.prediction_ = True
-
-        self.day_price_db_ = DayPriceDB("KoreaStockData.db", "day_price")
-        self.day_pre_db_ = DayPreDB("KoreaDayPre.db", "TODAY_STOCK_LIST")
-       
-        self.char_dir_ = "chart_Korea/"
-        self.base_web_site_ = "http://finance.daum.net/quotes/A%s"
-        self.time_frame_ = 5
-        self.balance_ = 10000000
-
-    def crawling_time(self):
-        now = time.localtime()
-        start_hour = 16
-        start_min = 30
-        if now.tm_wday < 5:
-            if now.tm_hour == start_hour and now.tm_min >= start_min: 
-                return True
-        return False
-
+#---------------------------------------------------------#
 class TaiwanStockMarketConfig(StockMarketConfig):
-    def __init__(self):
-        self.name_ = "Taiwan"
-
-        telegram_token = "6843658717:AAEMgheOqSoU6VWYlYkcxq1lbvYdpuvV5kI"
-        telegram_id = "508897948"
-        line_token = "라인 토큰"
-        #self.messenger_ = LineBot(token = line_token, id = telegram_id, name = self.name_)
-        self.messenger_ = TelegramBot(token = telegram_token, id = telegram_id, name = self.name_)
-
-        self.is_debug_ = False
-        self.DATE_FMT = "%Y-%m-%d"
-        self.stock_type_ = StockType.STOCK_KOREA
-
-        self.crawler_ = TaiwanStockCrawler()
-        self.is_file_load_ = True
-        self.list_file_name_ = "list_taiwan_stock.txt"
-        self.index_ticker_ = "上市"
-        self.print_all_ = True
-
-        self.limit_list_size_ = 250
-        self.prediction_ = True
-
-        self.day_price_db_ = DayPriceDB("TaiwanStockData.db", "day_price")
-        self.day_pre_db_ = DayPreDB("TaiwanDayPre.db", "TODAY_STOCK_LIST")
-       
-        self.char_dir_ = "chart_Taiwan/"
-        self.base_web_site_ = "https://finance.yahoo.com/quote/%s"
-        self.time_frame_ = 5
-        self.balance_ = 250000
-
-    def crawling_time(self):
-        now = time.localtime()
-        start_hour = 14
-        start_min = 30
-        if now.tm_wday < 5:
-            if now.tm_hour == start_hour and now.tm_min >= start_min: 
-                return True
-        return False
+    def load_config(self, config_file):
+        cheader = 'TaiwanStockMarketConfig'
+        self.set_config(config_file, cheader) 
     
 #---------------------------------------------------------#
-class UpbitStockMarketConfig(StockMarketConfig):
-    def __init__(self):
-        #https://api.telegram.org/bot643993591:AAEFRuLp7FlX40B1SdJgDjvga1QIdkUWUYU/getUpdates 로 id 얻어오기
-        telegram_token = "643993591:AAEFRuLp7FlX40B1SdJgDjvga1QIdkUWUYU"
-        telegram_id = "508897948"  ## 행복의 예보 채널 아이디
-        
-        self.is_debug_ = False
-        self.DATE_FMT = "%Y-%m-%d %H:%M:%S"
-        self.stock_type_ = StockType.BITCOIN
-
-        self.crawler_ = UpbitCoinCrawler()
-        self.is_file_load_ = True
-        self.list_file_name_ = "list_coin.txt"
-
-        self.limit_list_size_ = -1
-        self.prediction_ = False
-        self.print_all_ = True
-
-        self.day_price_db_ = DayPriceFloatDB("CoinData.db", "day_price")
-        self.day_pre_db_ = DayPreDB("CoinDayPre.db", "TODAY_STOCK_LIST")    
-
-        self.char_dir_ = "chart_coins/"
-        self.base_web_site_ = "https://upbit.com/exchange?code=CRIX.UPBIT.KRW-%s"
-        self.time_frame_ = 5
-
-    def crawling_time(self):
-        now = time.localtime()
-        if (now.tm_min % 30) == 0: 
-            return True
-        return False
-
-#---------------------------------------------------------#
 class BinanceStockMarketConfig(StockMarketConfig):
-    def __init__(self):
-        self.name_ = "Biance"
-        telegram_token = "임의 토큰"
-        telegram_id = "임의 아이디"
-        line_token = "라인 토큰"
-        #self.messenger_ = LineBot(token = line_token, id = telegram_id, name = self.name_)
-        self.messenger_ = TelegramBot(token = telegram_token, id = telegram_id, name = self.name_)
-
-        self.telegram_token_ = "1807903004:AAE6PEWcccwrOO8Q8hY7u6vqZs7zQlRt8r4"
-        self.telegram_id_ = "508897948" 
-        self.DATE_FMT = "%Y-%m-%d %H:%M:%S"
-        self.stock_type_ = StockType.BITCOIN
-
-        self.market_key = "txSeICeVxYgm2Sy8ECAuteNo1DqhTSmGXzd93QEoYgvOhYXCECADkI77SR2GNEyO"
-        self.market_secret = "oxK8JqhTP5ySr9i9ZjNpBjyT1780dQok9NYdyrODES8Ll8mLRyPIyrGNdchspCJa"
-        self.crawler_ = BinanceCoinCrawler()
-        self.is_file_load_ = False
-        self.list_file_name_ = "list_binance_coin.txt"
-        self.print_all_ = True
-
-        self.limit_list_size_ = -1
-        self.prediction_ = False
-
-        self.day_price_db_ = DayPriceFloatDB("BinanceCoinData.db", "day_price")
-        self.day_pre_db_ = DayPreDB("BinanceCoinDayPre.db", "TODAY_STOCK_LIST")    
-        self.balance_ = 1
-
-        self.char_dir_ = "chart_coins/"
-        self.base_web_site_ = "https://www.binance.com/ko/trade/%s"
-        self.time_frame_ = 3        # 3분은 너무 손해 보는거 같다 15분정도로
-        self.is_debug_ = True
-
-    def crawling_time(self):
-        now = time.localtime()
-        if (now.tm_min % self.time_frame_) == 0: 
-            return True
-        return False
+    def load_config(self, config_file):
+        cheader = 'BinanceStockMarketConfig'
+        self.set_config(config_file, cheader) 

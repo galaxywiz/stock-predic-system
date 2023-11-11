@@ -38,7 +38,7 @@ class StockMarket:
 
     def __process(self):
         self.update_stocks()
-        self.predic_stock()
+        self.check_strategy()
 
     def do(self):
         if self.config_.crawling_time():

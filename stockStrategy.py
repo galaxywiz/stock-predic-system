@@ -1,6 +1,4 @@
 from stockData import TradingState
-import talib.abstract as ta
-from talib import MA_Type
 from tradingStatment import Transaction, TradingStatement
 
 class StockStrategy:

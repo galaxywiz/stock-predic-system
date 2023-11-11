@@ -13,6 +13,7 @@ from sklearn import linear_model
 from stockStrategy import StockStrategy
 
 class FiveLineStockStrategy(StockStrategy):
+    able_back_test_ = False
     def make_indicators(self, start = 0, end = 0):
         df_copy = super().make_indicators(start, end)
         if df_copy is None:

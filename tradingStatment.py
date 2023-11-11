@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import os.path
-import stockData
 import logger
 
 class Transaction:
@@ -9,8 +8,9 @@ class Transaction:
     def set_bid(self, candle, batting_money = 0):
         self.bid_candle_ = candle
         self.ask_candle_ = None
+        self.amount_ = 0
         if batting_money == 0:
-            self.amount_ = 1
+            return 0
         else:
             bid_price = self.bid_candle_['close']
             amount = int(batting_money / bid_price)
@@ -40,18 +40,17 @@ class Transaction:
         return profit_rate
 
 class TradingStatement:
-    def __init__(self, sd, trading, balance=0, kelly_rate=0.0):
+    def __init__(self, sd, trading, balance=0):
         self.stock_data_ = sd
         self.transactions_ = []
         self.balance_ = balance
         self.init_balance_ = balance
 
         self.trading_ = trading
-        self.kelly_rate_ = kelly_rate
         self.trading_name_ = trading.__class__.__name__
         self.chart_path_ = ""
         self.excel_file_ = ""
-        
+
     def add_transaction(self, tran):
         self.transactions_.append(tran)
 
@@ -113,19 +112,22 @@ class TradingStatement:
     # 해당 전략으로 최적의 배팅 비율을 구한다
     def __kelly_criterion(self, p, profit, loss):
         if loss == 0:
-            logger.info("켈리공식으로 손실율 0으론 계산 불가")
+  #          logger.info("켈리공식으로 손실율 0으론 계산 불가")
             return 0
         
         q = 1 - p
         b = profit / loss  # 이길 때 얻는 이익과 지면 손실 비율의 비율
         if b == 0:
-            logger.info("켈리공식으로 이익, 손실 비율 0으론 계산 불가")
+ #           logger.info("켈리공식으로 이익, 손실 비율 0으론 계산 불가")
             return 0
         
         f_star = (p * b - q) / b
         return f_star
     
-    def optimal_bet_ratio(self):
+    def calc_kelly_rate(self):
+        trading_count = self.total_trading_count() 
+        if trading_count == 0:
+            return 0
         win_rate = self.win_rating()
         profit_rate = self.profit_rate()
         lose_rate = self.lose_rate()
@@ -142,6 +144,8 @@ class TradingStatement:
         win_rate = self.win_rating()
         profit_rate = self.profit_rate()
         lose_rate = self.lose_rate()
+        kelly_rate = self.calc_kelly_rate()
+
         sd = self.stock_data_
         last_candle = sd.chart_data_.iloc[-1]
         first_candle = sd.chart_data_.iloc[0]
@@ -152,16 +156,16 @@ class TradingStatement:
             log += "SIGNAL:[{0}]\n".format(info)
             log += "종목:[{0}]\n".format(ticker_name)
             log += "전략:[{0}] in [{1}]\n".format( self.trading_name_, last_candle['date'])
-            log += "매수시 배팅율 [{0:.2f}]%\n".format(self.kelly_rate_ * 100)
-            log += " => 10000 일경우 배팅금 [{0:.2f}]\n".format(10000 * self.kelly_rate_)
+            log += "매수시 배팅율 [{0:.2f}]%\n".format(kelly_rate * 100)
+            log += " => 10000 일경우 배팅금 [{0:.2f}]\n".format(10000 * kelly_rate)
             log += "——————————————————\n"
 
         log += "! [{0}][{1}] 의 백테스팅 리포트\n".format(self.stock_data_.name_, self.trading_name_)      
         log += "+ [{0}] ~ [{1}] 기간.\n".format(first_candle['date'], last_candle['date'])
         log += "+ 자본금[{0:,.2f}] -> 총이익[{1:,.2f}]\n".format(self.init_balance_, self.total_prtofit())
         log += "+ 승률[{0:.2f}]%, 총거래수[{1}]\n".format(win_rate * 100, trading_count)
-        log += "+ 수익율[{0:.2f}]%, 손실율[{1:.2f}]%, 최적배팅[{2:.2f}]%\n".format(profit_rate * 100, lose_rate * 100, self.kelly_rate_ * 100)
-        log += "+ [{0:.2f}]% 비율 배팅 시뮬시 => 총 금액[{1:,.2f}]".format(self.kelly_rate_ * 100, self.balance_)
+        log += "+ 수익율[{0:.2f}]%, 손실율[{1:.2f}]%, 최적배팅[{2:.2f}]%\n".format(profit_rate * 100, lose_rate * 100, kelly_rate * 100)
+        log += "+ [{0:.2f}]% 비율 배팅 시뮬시 => 총 금액[{1:,.2f}]".format(kelly_rate * 100, self.balance_)
         return log
         
     def log(self):

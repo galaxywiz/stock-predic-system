@@ -80,17 +80,8 @@ class StrategyStockDo(PredicStockDo):
         strategy = strategy_template(stock_data=sd
                                      , char_dir=self.stock_market_.chart_dir_)
         
-        trading_statement = strategy.back_test(transaction_simul=False)
-        kelly_rate = trading_statement.optimal_bet_ratio()
-        if 0 < kelly_rate and kelly_rate < 1:
-            trading_statement = strategy.back_test(transaction_simul=True
-                                                  , balance=balance
-                                                  , kelly_rate=kelly_rate)
-            strategy.print_chart()
-            trading_statement.chart_path_ = strategy.chart_path_
-            return trading_statement
-        
-        return None
+        trading_statement = strategy.back_test(balance=balance)
+        return trading_statement
     
     # 전략을 투입할시 승률을 구한다
     def __evaluation(self):
@@ -98,10 +89,15 @@ class StrategyStockDo(PredicStockDo):
         balance = sm.config_.balance_
         for sd in sm.stock_pool_.values():
             for template in self.strategy_:
+                if template.able_back_test_ == False:
+                    continue
                 trading_statement = self.back_test(strategy_template=template
                                                    ,sd = sd
                                                    ,balance=balance)
                 if trading_statement is None:
+                    continue
+
+                if trading_statement.total_trading_count() == 0:
                     continue
 
                 self.trading_history_.append(trading_statement)
@@ -119,7 +115,7 @@ class StrategyStockDo(PredicStockDo):
         config = sm.config_
         all_print = config.print_all_
         now = datetime.now()
-        log = "☆◇△ {0} - {1}".format(sm.name_, now.strftime(sm.DATE_FMT))
+        log = "☆ 추세 확인 {0} - {1} ".format(sm.name_, now.strftime(sm.DATE_FMT))
         sm.send_message(log)
         
         for sd in sm.stock_pool_.values():
@@ -128,6 +124,9 @@ class StrategyStockDo(PredicStockDo):
                 strategy.print_chart()  
                 log_text = "stock: {0}\nstrategy: {1}".format(sd.name_, strategy.__class__.__name__ )
                 sm.send_chart_log(log_text, strategy.chart_path_)              
+
+        log = "☆ 추천 {0} - {1}".format(sm.name_, now.strftime(sm.DATE_FMT))
+        sm.send_message(log)
 
         # 전체 결과 출력
         for trading_statement in self.trading_history_:

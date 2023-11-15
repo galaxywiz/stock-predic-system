@@ -5,6 +5,7 @@ import numpy as np
 
 import mplfinance as mpf  # mpl_finance 대신 mplfinance 사용
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 import talib.abstract as ta
 from talib import MA_Type
@@ -56,12 +57,12 @@ class BollengerStockStrategy(StockStrategy):
         c_len = self.chart_len_
         df = self.make_indicators(start=chart_len - c_len * 2, end=chart_len)
         df = df[-c_len:]
-
-        # ------------- 차트 그리기 ---------------- #
-        plt.rc('font', family='Malgun Gothic')
+        
+        # ------------- 차트 그리기 ---------------- #        
         df.set_index('date', inplace=True)
-       
-        # 볼린저 밴드를 추가 지표로 설정
+        
+        mpl.rcParams['font.family'] = 'Malgun Gothic'  # 예: 'Malgun Gothic', 'AppleGothic' 등
+        # 볼린저  밴드를 추가 지표로 설정
         add_plot = [
             mpf.make_addplot(df['Upper'], color='red', ylabel='Upper'),
             mpf.make_addplot(df['Middle'], color='black', ylabel='Middle'),

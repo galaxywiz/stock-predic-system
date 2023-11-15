@@ -15,12 +15,11 @@ import config
 # -----------------------------------------
 # 메인 함수 시작
 if __name__ == '__main__':
-    botList = []
-    test = True
+    market_list = []
+    test = False
     if test:
         # biancesMarket = stockMaket.StockMarket(
         #     config.BinanceStockMarketConfig(), real_trade=False)
-        
         usaMarket = stockMaket.StockMarket(
             config.USAStockMarketConfig(), real_trade=False)
         koreaMarket = stockMaket.StockMarket(
@@ -28,12 +27,9 @@ if __name__ == '__main__':
         taiwanMarket = stockMaket.StockMarket(
             config.TaiwanStockMarketConfig(), real_trade=False)
 
-        botList.append(usaMarket)
-        botList.append(koreaMarket)
-        botList.append(taiwanMarket)
-        for bot in botList:
-            bot.check_strategy()
-    #    bot.predic_stock()
+        market_list.append(usaMarket)
+        market_list.append(koreaMarket)
+        market_list.append(taiwanMarket)
     else:
         usaMarket = stockMaket.StockMarket(
             config.USAStockMarketConfig(), real_trade=False)
@@ -42,13 +38,17 @@ if __name__ == '__main__':
         taiwanMarket = stockMaket.StockMarket(
             config.TaiwanStockMarketConfig(), real_trade=False)
 
-        botList.append(usaMarket)
-        botList.append(koreaMarket)
-        botList.append(taiwanMarket)
-      
-    while(True):
-        now = datetime.now()
-        for stockMarket in botList:
-            stockMarket.do()
+        market_list.append(usaMarket)
+        market_list.append(koreaMarket)
+        market_list.append(taiwanMarket)
 
-        time.sleep(1)
+    if test:
+        for market in market_list:
+            market.check_strategy()
+        #   market.predic_stock()
+    else:  
+        while(True):
+            for market in market_list:
+                market.do()
+
+            time.sleep(1)

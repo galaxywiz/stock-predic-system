@@ -2,6 +2,7 @@ import os.path
 
 import mplfinance as mpf  # mpl_finance 대신 mplfinance 사용
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 import talib.abstract as ta
 from talib import MA_Type
@@ -56,10 +57,9 @@ class MacdStockStrategy(StockStrategy):
         df = df[-c_len:]
 
         # ------------- 차트 그리기 ---------------- #
-        plt.rc('font', family='Malgun Gothic')
-
         df.set_index('date', inplace=True)
-
+        mpl.rcParams['font.family'] = 'Malgun Gothic'  # 예: 'Malgun Gothic', 'AppleGothic' 등
+  
         # 별도의 패널로 MACD 관련 지표를 분리하여 표시
         apds = [
             mpf.make_addplot(df['sma5'], color='magenta', ylabel='Price/SMA5'),

@@ -28,30 +28,28 @@ class StockMarket:
         self.chart_dir_ = ("./chart/%s" % self.name_)
 
         locale.setlocale(locale.LC_ALL, '')
-        now = datetime.now() - timedelta(days=1)  
-        self.last_crawling_time_ = now
+        yesterday = datetime.now() - timedelta(days=1)  
+        self.last_crawling_time_ = yesterday
  
         self.get_stocks_list()
-        
-        # msg = "%s is ready" % (self.name_)
-        # self.send_message(msg)
 
     def __process(self):
         self.update_stocks()
         self.check_strategy()
 
     def do(self):
-        if self.config_.crawling_time():
-            now = datetime.now()
-            elpe = now - self.last_crawling_time_
-            if elpe.total_seconds() < (60*60):  # 1시간 마다 체크
-                return
+        now = datetime.now()
+        if now.date() != self.last_crawling_time_.date():
+            craw_time = self.config_.crawling_time()
+            if craw_time < now:
+                self.last_crawling_time_ = now
 
-            logger.info("### [%s] market run. check [%d] stocks" % (self.name_, len(self.stock_pool_)))
-            self.last_crawling_time_ = now
-            self.__process()
-            self.copy_db()
-            logger.info("### [%s] market job completed." % self.name_)
+                logger.info("### [%s] market run. check [%d] stocks" % (self.name_, len(self.stock_pool_)))
+                
+                self.__process()
+                self.copy_db()
+
+                logger.info("### [%s] market job completed." % self.name_)
 
     #----------------------------------------------------------#
     # 메시지 전송용
@@ -215,7 +213,8 @@ class StockMarket:
             name = sd.name_
             ticker = sd.ticker_
             market_cap = 0
-            self.__load_stock_data(name, ticker, market_cap)
+            having = sd.having_
+            self.__load_stock_data(name, ticker, market_cap, having)
 
     def get_stock(self, name):
         if name in self.stock_pool_:

@@ -5,6 +5,7 @@ import numpy as np
 
 import mplfinance as mpf  # mpl_finance 대신 mplfinance 사용
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 import talib.abstract as ta
 from talib import MA_Type
@@ -74,11 +75,10 @@ class FiveLineStockStrategy(StockStrategy):
         df = df[-c_len:]
 
         # ------------- 차트 그리기 ---------------- #
-        plt.rc('font', family='Malgun Gothic')
-
         df.set_index('date', inplace=True)
-        add_plot = []
+        mpl.rcParams['font.family'] = 'Malgun Gothic'  # 예: 'Malgun Gothic', 'AppleGothic' 등
 
+        add_plot = []
         for i in ['priceTL', 'TL-2SD', 'TL-SD', 'TL+SD', 'TL+2SD']:
             add_plot.append(mpf.make_addplot(df[i], ylabel=i))
 

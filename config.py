@@ -1,5 +1,5 @@
 import configparser
-import time
+import datetime as dt
 
 from stockCrawler import USAStockCrawler, FutureCrawler, KoreaStockCrawler, TaiwanStockCrawler, BinanceCoinCrawler
 from sqliteStockDB import DayPriceDB, DayPriceFloatDB, DayPreDB
@@ -57,15 +57,13 @@ class StockMarketConfig:
         self.base_web_site_ = config[cheader]['base_web_site']
         self.balance_ = config.getint(cheader, 'balance')
 
-        self.start_hour_ = config[cheader]['start_hour']
-        self.start_min_ = config[cheader]['start_min']
+        self.start_hour_ = config.getint(cheader, 'start_hour')
+        self.start_min_ = config.getint(cheader, 'start_min')
 
     def crawling_time(self):
-        now = time.localtime()
-        if 0 < now.tm_wday and now.tm_wday < 6:
-            if now.tm_hour == self.start_hour_ and now.tm_min >= self.start_min_: 
-                return True
-        return False
+        now = dt.datetime.now()
+        craw_time = dt.datetime(now.year, now.month, now.day, self.start_hour_, self.start_min_)
+        return craw_time
 
 #---------------------------------------------------------#
 class USAStockMarketConfig(StockMarketConfig):

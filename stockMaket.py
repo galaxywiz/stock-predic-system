@@ -40,6 +40,8 @@ class StockMarket:
     def do(self):
         now = datetime.now()
         if now.date() != self.last_crawling_time_.date():
+            if now.weekday() not in self.config_.start_week_:
+                return
             craw_time = self.config_.crawling_time()
             if craw_time < now:
                 self.last_crawling_time_ = now

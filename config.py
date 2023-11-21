@@ -60,7 +60,8 @@ class StockMarketConfig:
         self.start_hour_ = config.getint(cheader, 'start_hour')
         self.start_min_ = config.getint(cheader, 'start_min')
         self.start_week_ = config[cheader]['start_week'].split(',')
-        
+        self.start_week_ = [int(x) for x in self.start_week_]
+
     def crawling_time(self):
         now = dt.datetime.now()
         craw_time = dt.datetime(now.year, now.month, now.day, self.start_hour_, self.start_min_)

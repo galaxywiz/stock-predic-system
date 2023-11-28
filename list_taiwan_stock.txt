@@ -18,11 +18,12 @@ REALTECK:2379:44:0
 ACER:2353:45:0
 EVA_AIR:2618:50:0
 CHINA_AIR:2610:51:0
-Yuanta_US_20+_Year_Bond:ETF00720B:100:0
 國泰永續高股息:00878:101:0
 群益台灣精選高息:00919:102:0
 復華台灣科技優息:00929:103:0
-CTBC_Banking_Senior_10+_Year_Bond_ETF:00773B:104:0
-鑽石投資:6901:105:0
-安心:1259:106:0
-新光金:2888:107:0
+鑽石投資:6901:104:0
+安心:1259:105:0
+新光金:2888:106:0
+Yuanta_US_20+_Year_Bond:ETF00720B:200:0
+CTBC_Banking_Senior_10+_Year_Bond_ETF:00773B:201:0
+Cathay_US_Corporate_10+_Years_Banking ETF:00933B:202:0

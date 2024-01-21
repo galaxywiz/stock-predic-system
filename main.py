@@ -14,6 +14,8 @@ import stockMaket
 import config
 # -----------------------------------------
 # 메인 함수 시작
+# 음.. 보는게 너무 힘든데, 텔레그램 체널 2,3개 연동 하도록 해야 할듯.
+# 모니터닝용, 지금 보유용
 if __name__ == '__main__':
     market_list = []
     test = False

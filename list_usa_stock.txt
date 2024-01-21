@@ -1,6 +1,7 @@
 Nasdaq:^IXIC:0:0
 SNP500:^GSPC:1:0
 Tesla:TSLA:10:1
+TSL3.L:TSL3.L:16:1
 MicroSoft:MSFT:11:0
 Apple:AAPL:12:1
 Google:GOOG:13:1

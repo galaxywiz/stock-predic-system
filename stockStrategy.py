@@ -3,7 +3,7 @@ from tradingStatment import Transaction, TradingStatement
 
 class StockStrategy:
     chart_path_ = ""
-    chart_len_ = 100
+    chart_len_ = 100    #원래 882(3.5년) 이 로하스 스태프 길이 882
     able_back_test_ = True
 
     def __init__(self, stock_data, char_dir):

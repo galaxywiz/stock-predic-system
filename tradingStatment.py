@@ -156,7 +156,7 @@ class TradingStatement:
             log += "——————————————————\n"
             log += "SIGNAL:[{0}]\n".format(info)
             log += "종목:[{0}]\n".format(ticker_name)
-            log += "전략:[{0}] in [{1}] close[{2}]\n".format( self.trading_name_, last_candle['date'], now_price)
+            log += "전략:[{0}] in [{1}] close[{2:.2f}]\n".format( self.trading_name_, last_candle['date'], now_price)
             log += "매수시 배팅율 [{0:.2f}]%\n".format(kelly_rate * 100)
             log += " => 10000 일경우 배팅금 [{0:.2f}]\n".format(10000 * kelly_rate)
             log += "——————————————————\n"
@@ -170,7 +170,7 @@ class TradingStatement:
         log += "——————————————————\n"
         first_price = float(first_candle['close'])
         init_amount = int(self.init_balance_ / first_price)
-        log += "+ 만약 당시 [{0:,.2f}]을 투자후 매매 안했다면 [{1}] 개 보유\n".format(self.init_balance_, init_amount)
+        log += "+ 만약 당시 [{0:,.2f}]$ 을 투자후 매매 안했다면 [{1}]개 보유\n".format(self.init_balance_, init_amount)
         log += "+ 지금 가치 [{0}]개는 [{1:,.2f}]$\n".format(init_amount, init_amount * now_price)
         return log
         

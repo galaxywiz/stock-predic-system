@@ -167,7 +167,7 @@ class TradingStatement:
         log += "+ 승률[{0:.2f}]%, 총거래수[{1}]\n".format(win_rate * 100, trading_count)
         log += "+ 수익율[{0:.2f}]%, 손실율[{1:.2f}]%, 최적배팅[{2:.2f}]%\n".format(profit_rate * 100, lose_rate * 100, kelly_rate * 100)
         log += "+ [{0:.2f}]% 비율 배팅 시뮬시 => 총 금액[{1:,.2f}]\n".format(kelly_rate * 100, self.balance_)
-     
+        log += "——————————————————\n"
         first_price = float(first_candle['close'])
         init_amount = int(self.init_balance_ / first_price)
         log += "+ 만약 당시 [{0:,.2f}]을 투자후 매매 안했다면 [{1}] 개 보유\n".format(self.init_balance_, init_amount)

@@ -24,14 +24,14 @@ if __name__ == '__main__':
         #     config.BinanceStockMarketConfig(), real_trade=False)
         usaMarket = stockMaket.StockMarket(
             config.USAStockMarketConfig(), real_trade=False)
-        koreaMarket = stockMaket.StockMarket(
-            config.KoreaStockMarketConfig(), real_trade=False)
-        taiwanMarket = stockMaket.StockMarket(
-            config.TaiwanStockMarketConfig(), real_trade=False)
+        # koreaMarket = stockMaket.StockMarket(
+        #     config.KoreaStockMarketConfig(), real_trade=False)
+        # taiwanMarket = stockMaket.StockMarket(
+        #     config.TaiwanStockMarketConfig(), real_trade=False)
 
         market_list.append(usaMarket)
-        market_list.append(koreaMarket)
-        market_list.append(taiwanMarket)
+        # market_list.append(koreaMarket)
+        # market_list.append(taiwanMarket)
     else:
         usaMarket = stockMaket.StockMarket(
             config.USAStockMarketConfig(), real_trade=False)

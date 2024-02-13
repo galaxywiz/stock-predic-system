@@ -95,7 +95,7 @@ class StockMarket:
         return True, df
 
     def __check_data_frame(self, df, name, ticker):
-        LIMIT_DAY = 100
+        LIMIT_DAY = 60
         #30일전 데이터가 있는지 체크
         if len(df) < LIMIT_DAY:
             logger.error("[%s][%s] load fail. because data too short" % (name, ticker))
@@ -234,48 +234,50 @@ class StockMarket:
     #----------------------------------------------------------#
     # 예측 봇을 돌리는 용도
     def predic_stock(self):
-        predic = PredicStockDo(self)
-        predic.do()
-        # # s&p 500 지수를 같이 참고로 예측
-        # if self.config_.index_ticker_ not in self.stock_pool_:
-        #     logger.info("s&p 지수 로딩 실패")
-        #     return
+        pass
+        # predic = PredicStockDo(self)
+        # predic.do()
         
-        # stock_price_index = self.stock_pool_[self.config_.index_ticker_]
+        # # # s&p 500 지수를 같이 참고로 예측
+        # # if self.config_.index_ticker_ not in self.stock_pool_:
+        # #     logger.info("s&p 지수 로딩 실패")
+        # #     return
+        
+        # # stock_price_index = self.stock_pool_[self.config_.index_ticker_]
 
-        # recommand_buy = {}
-        # recommand_sell = {}
-        # for sd in self.stock_pool_.values():
-        #     model_name = self.config_.name + '_' + sd.name_
-        #     mm_predic = sp.StockPredic(sd, stock_price_index, model_name)
-        #     predic = mm_predic.predic()   
-        #     sd.predic_price_ = predic
+        # # recommand_buy = {}
+        # # recommand_sell = {}
+        # # for sd in self.stock_pool_.values():
+        # #     model_name = self.config_.name + '_' + sd.name_
+        # #     mm_predic = sp.StockPredic(sd, stock_price_index, model_name)
+        # #     predic = mm_predic.predic()   
+        # #     sd.predic_price_ = predic
 
-        #     predic_price = predic[0]
-        #     chart_file = PrintChart.saveFigure(self.chart_dir_, sd, self.DATE_FMT)
+        # #     predic_price = predic[0]
+        # #     chart_file = PrintChart.saveFigure(self.chart_dir_, sd, self.DATE_FMT)
 
-        #     now_date = sd.now_candle_time()
-        #     now_price = sd.now_price()
-        #     if now_price < predic_price:
-        #         recommand_buy[sd.name_] = [now_date, now_price, predic_price, chart_file]
-        #     else:
-        #         recommand_sell[sd.name_] = [now_date, now_price, predic_price, chart_file]
+        # #     now_date = sd.now_candle_time()
+        # #     now_price = sd.now_price()
+        # #     if now_price < predic_price:
+        # #         recommand_buy[sd.name_] = [now_date, now_price, predic_price, chart_file]
+        # #     else:
+        # #         recommand_sell[sd.name_] = [now_date, now_price, predic_price, chart_file]
 
-        # log = "### 상승 예감 ↑ 매수 추천\n"
-        # for name, data in recommand_buy.items():
-        #     l = ("[%s]의 [%s]의 종가[%2.2f], 다음 예측[%2.2f], 상승률[%2.2f]\n" %
-        #             (name, data[0], data[1], data[2], u.calcRate(data[1], data[2])*100))
-        #     self.send_chart_log(l, data[3])
-        #     log += l
+        # # log = "### 상승 예감 ↑ 매수 추천\n"
+        # # for name, data in recommand_buy.items():
+        # #     l = ("[%s]의 [%s]의 종가[%2.2f], 다음 예측[%2.2f], 상승률[%2.2f]\n" %
+        # #             (name, data[0], data[1], data[2], u.calcRate(data[1], data[2])*100))
+        # #     self.send_chart_log(l, data[3])
+        # #     log += l
 
-        # log = "### 하락 예감 ↓ 매도 추천 "
-        # for name, data in recommand_sell.items():
-        #     l = ("[%s]의 [%s]의 종가[%2.2f], 다음 예측[%2.2f], 하락률[%2.2f]\n" %
-        #             (name, data[0], data[1], data[2], u.calcRate(data[1], data[2])*100))
-        #     self.send_chart_log(l, data[3])
-        #     log += l
+        # # log = "### 하락 예감 ↓ 매도 추천 "
+        # # for name, data in recommand_sell.items():
+        # #     l = ("[%s]의 [%s]의 종가[%2.2f], 다음 예측[%2.2f], 하락률[%2.2f]\n" %
+        # #             (name, data[0], data[1], data[2], u.calcRate(data[1], data[2])*100))
+        # #     self.send_chart_log(l, data[3])
+        # #     log += l
 
-        # self.send_message(log)
+        # # self.send_message(log)
 
     #----------------------------------------------------------#
     def check_strategy(self):

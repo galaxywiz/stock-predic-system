@@ -1,6 +1,6 @@
 # talib 를 위해 아나콘다 설치 필요
-# https://www.lfd.uci.edu/~gohlke/pythonlibs/
-# pip install .\TA_Lib-0.4.24-cp310-cp310-win_amd64.whl       
+# https://github.com/cgohlke/talib-build/releases
+# pip install .\TA_Lib-0.4.28-cp312-cp312-win_amd64.whl     
 # OR
 # conda install -c quantopian ta-lib 
 # conda install -c masdeseiscaracteres ta-lib
@@ -12,7 +12,7 @@
 from enum import Enum
 import talib.abstract as ta
 from talib import MA_Type
-from sklearn import linear_model
+#from sklearn import linear_model
 import numpy as np
 
 import util

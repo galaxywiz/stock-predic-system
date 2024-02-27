@@ -156,22 +156,22 @@ class TradingStatement:
             log += "——————————————————\n"
             log += "SIGNAL:[{0}]\n".format(info)
             log += "종목:[{0}]\n".format(ticker_name)
-            log += "전략:[{0}] in [{1}] close[{2:.2f}]\n".format( self.trading_name_, last_candle['date'], now_price)
+            log += "전략:[{0}] in [{1}] close[{2:.0f}$]\n".format( self.trading_name_, last_candle['date'], now_price)
             log += "매수시 배팅율 [{0:.2f}]%\n".format(kelly_rate * 100)
-            log += " => 10000 일경우 배팅금 [{0:.2f}]\n".format(10000 * kelly_rate)
+            log += " => 10000$ 일경우 배팅금액 [{0:.0f}$]\n".format(10000 * kelly_rate)
             log += "——————————————————\n"
 
         log += "! [{0}][{1}] 의 백테스팅 리포트\n".format(self.stock_data_.name_, self.trading_name_)      
         log += "+ [{0}] ~ [{1}] 기간.\n".format(first_candle['date'], last_candle['date'])
-        log += "+ 자본금[{0:,.2f}] -> 총이익[{1:,.2f}]\n".format(self.init_balance_, self.total_prtofit())
+        log += "+ 자본금[{0:,.0f}$] -> 총이익[{1:,.0f}$]\n".format(self.init_balance_, self.total_prtofit())
         log += "+ 승률[{0:.2f}]%, 총거래수[{1}]\n".format(win_rate * 100, trading_count)
         log += "+ 수익율[{0:.2f}]%, 손실율[{1:.2f}]%, 최적배팅[{2:.2f}]%\n".format(profit_rate * 100, lose_rate * 100, kelly_rate * 100)
-        log += "+ [{0:.2f}]% 비율 배팅 시뮬시 => 총 금액[{1:,.2f}]\n".format(kelly_rate * 100, self.balance_)
+        log += "+ [{0:.2f}]% 비율 배팅 시뮬시 => 총 금액[{1:,.0f}$]\n".format(kelly_rate * 100, self.balance_)
         log += "——————————————————\n"
         first_price = float(first_candle['close'])
         init_amount = int(self.init_balance_ / first_price)
-        log += "+ 만약 당시 [{0:,.2f}]$ 을 투자후 매매 안했다면 [{1}]개 보유\n".format(self.init_balance_, init_amount)
-        log += "+ 지금 가치 [{0}]개는 [{1:,.2f}]$\n".format(init_amount, init_amount * now_price)
+        log += "+ 만약 당시 [{0:,.0f}$]을 투자후 매매 안했다면 [{1}]개 보유\n".format(self.init_balance_, init_amount)
+        log += "+ 지금 가치 [{0}]개는 [{1:,.0f}$]\n".format(init_amount, init_amount * now_price)
         return log
         
     def log(self):

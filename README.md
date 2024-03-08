@@ -1,23 +1,41 @@
-# 파이토치를 활용한 주식예측 시스템.
+# a stock prediction assistant
 #-----------------------------------
+Write Python 3.12.2
 
-#=== 아이디어 ===#
-1. 실제 주식 시장 처럼. 1일 1data 쌓는 형식으로 진행
-   데이터 시작은 5년전 부터 시작,
-   게임 시작은 3년전 부터 시작, -> 1일 1데이터 쌓기로 진행
-2. agent 는 특정 금액만 가지고 buy / sell 로 주식 매수 매입
-3. dqn 으로 agent 가 최적의 주식으로 돈을 가장 많이 버는 모델 만들어 보기
+#=== Program Behavior Structure ===#
+1. Read stock data in specific markets (US, Korea, Taiwan, etc.) using Yahoo Finance, etc. (daily chart)
+2. Renewed stock data after market close
+3. Backtesting with specified trading algorithms (Lohas 5-line, MACD, Bollinger)
+4. Find the winning rate and use the Kelly formula to calculate the optimal batting rate
+5. Backtesting again with this batting ratio
+6. Processing results and charts to be sent to the specified Telegram for daily confirmation.
 
-# 기본 구조
-   main.py 로 구동
-   1. config를 읽어 드린 stockMarket을 실행
-   2. stockMarket은 stockCrawler을 이용해서 인터넷에서 주식 데이터를 
-   갖고온 stockData를 관리함.
-   3. 읽기를 단축 하기 위해서 sqlite를 사용해서 주식 데이터 저장도 지원
-   4. 이 주식 데이터를 파이토치를 사용해서 (stockPredic) 다음날 예측치를 구함.
-      주식 시장 분위기를 파악하기 위해 각 시장의 index지수를 같이 참조
-   5. 이 예측치를 갖고 printChart 를 사용해서 차트생성
-   6. 결과를 messenger 를 통해 config의 토큰에 지정된 메신저 봇에 전달
+# customization files
+1. *_stock.txt
+I have a list of Korean, Taiwanese, and American stocks.
+The entry format is name:ticker:separate number
+name is the value to view in the messenger
+Ticker is the price of Tigger to be found in yahoo finance
+
+2. config.py
+Classes with Random Variables
+Messenger alarms use Telegram and Line. Make each bot token and fill it in
+telegram_token = "any token"
+telegram_id = "any ID"
+line_token = "line token"
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# 주식 예측 도우미
+#-----------------------------------
+파이썬 3.12.2 로 작성
+
+#=== 프로그램 동작 구조 ===#
+1. 야후 파이낸스등을 사용하여 특정시장(미국, 한국, 대만등) 주식 데이터를 (1일봉 차트) 읽어들임
+2. 장 마감이후 주식데이터 새로 갱신
+3. 지정된 매매 알고리즘(로하스 5선, MACD, 볼린저) 로 백테스팅
+4. 승률을 구해서, 이를 바탕으로 켈리 공식을 사용, 최적의 배팅 비율을 계산
+5. 이 배팅비율로 다시 백테스팅
+6. 결과와 차트를 지정된 텔레그램으로 보내서 매일 확일 할 수 있도록 처리.
 
 # 커스터마이징 파일들
 1. *_stock.txt

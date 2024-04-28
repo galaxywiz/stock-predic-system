@@ -19,9 +19,13 @@ class StockMarketConfig:
         telegram_token = config[cheader]['telegram_token']
         telegram_id = config[cheader]['telegram_id']
         line_token = config[cheader]['line_token']
-
+    
+        self.use_message_ = config[cheader]['use_message']
+        if self.use_message_:
         # 여기서 메신저 선택 로직을 추가할 수 있습니다
-        self.messenger_ = TelegramBot(token=telegram_token, id=telegram_id, name=self.name_)
+            self.messenger_ = TelegramBot(token=telegram_token, id=telegram_id, name=self.name_)
+        else:
+            self.messenger_ = None
 
         self.is_debug_ = config.getboolean(cheader, 'is_debug')
         self.DATE_FMT = config[cheader]['DATE_FMT']

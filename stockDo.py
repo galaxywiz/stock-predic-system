@@ -66,7 +66,7 @@ class PredicStockDo(StockDo):
 # 전략을 로딩, 조합해서 필터링 하는 역활
 # 5선화음, 이평선등 기본만 구현해보기
 class StrategyStockDo(PredicStockDo):
-    strategy_ = [FiveLineStockStrategy, BollengerStockStrategy, MacdStockStrategy]
+    strategy_ = [MacdStockStrategy, BollengerStockStrategy, FiveLineStockStrategy]
     trading_history_ = []
     bid_signal_ = []
     ask_signal_ = []

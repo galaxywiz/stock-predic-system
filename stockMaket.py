@@ -57,13 +57,19 @@ class StockMarket:
     #----------------------------------------------------------#
     # 메시지 전송용
     def send_message(self, log):
-        self.messenger_.send_message(log)
-    
-    def send_chart_log(self, log, chart_path):
-        if chart_path == None or len(chart_path) == 0:
+        if self.messenger_ != None:
             self.messenger_.send_message(log)
         else:
-            self.messenger_.send_photo(log, chart_path)
+            logger.info(log)
+    
+    def send_chart_log(self, log, chart_path):
+        if self.messenger_ != None:
+            if chart_path == None or len(chart_path) == 0:
+                self.messenger_.send_message(log)
+            else:
+                self.messenger_.send_photo(log, chart_path)
+        else:
+            logger.info(log)
 
     #----------------------------------------------------------#
     # db 에 데이터 저장 하고 로딩!

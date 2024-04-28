@@ -7,7 +7,7 @@
 # 2. agent 는 특정 금액만 가지고 buy / sell 로 주식 매수 매입
 # 3. dqn 으로 agent 가 최적의 주식으로 돈을 가장 많이 버는 모델 만들어 보기
 from datetime import datetime
-from datetime import timedelta
+from datetime import timedelta  
 import time
 
 import stockMaket
@@ -18,7 +18,7 @@ import config
 # 모니터닝용, 지금 보유용
 if __name__ == '__main__':
     market_list = []
-    test = False
+    test = True
     if test:
         # biancesMarket = stockMaket.StockMarket(
         #     config.BinanceStockMarketConfig(), real_trade=False)

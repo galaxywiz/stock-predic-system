@@ -95,9 +95,9 @@ class BollengerStockStrategy(StockStrategy):
                 data=[
                     go.Candlestick(x=date, open=open, high=high, low=low, close=close,
                                    # Increasing color for the line
-                                   increasing_line_color='red',
-                                   # Decreasing color for the line
-                                   decreasing_line_color='blue',
+                                #    increasing_line_color='red',
+                                #    # Decreasing color for the line
+                                #    decreasing_line_color='blue',
                                    name = '주가'
                                   ),
                     go.Scatter(x=date, y=upper, line=dict(color='red', width=1), name="상단 밴드"),
@@ -105,11 +105,16 @@ class BollengerStockStrategy(StockStrategy):
                     go.Scatter(x=date, y=lower, line=dict(color='blue', width=1), name="하단 밴드"),
                 ]
             )
+            now_price = sd.now_price()
+            now_time = sd.now_candle_time()
+            date_str = now_time.strftime("%Y-%m-%d")
+            title = "{0}[{1}], {2}일 종가:{3:,.2f}$".format(sd.name_, sd.ticker_, date_str, now_price)
             fig.update_layout(
-                title=sd.name_,
+                title=title,
                 xaxis_title='날짜', 
                 yaxis_title='가격',
-                xaxis_rangeslider_visible=False
+                xaxis_rangeslider_visible=False,
+                template='ggplot2',
                 )
 
             # PNG 파일로 저장

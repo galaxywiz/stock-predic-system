@@ -22,6 +22,7 @@ if __name__ == '__main__':
     if test:
         # biancesMarket = stockMaket.StockMarket(
         #     config.BinanceStockMarketConfig(), real_trade=False)
+        config.USAStockMarketConfig.use_message_ = False
         usaMarket = stockMaket.StockMarket(
             config.USAStockMarketConfig(), real_trade=False)
         # koreaMarket = stockMaket.StockMarket(

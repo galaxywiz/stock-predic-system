@@ -4,8 +4,12 @@ import mplfinance as mpf  # mpl_finance 대신 mplfinance 사용
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
+#plotly 설명
+#https://wikidocs.net/book/8909
 from plotly import graph_objects as go
 from plotly.subplots import make_subplots
+import plotly.io as pio
+
 import talib.abstract as ta
 from talib import MA_Type
 
@@ -102,14 +106,20 @@ class MacdStockStrategy(StockStrategy):
 
             # 차트 생성
             # Subplot setup (using go.Layout)
-            fig = make_subplots(vertical_spacing = 0, rows=2, cols=1, row_heights=[0.7, 0.3])
+            fig = make_subplots(
+                 vertical_spacing = 0.03,
+                 rows=2, cols=1,
+                 subplot_titles=("주식일봉차트", "MACD",),
+                 row_heights=[0.7, 0.3],
+                 shared_xaxes=True,
+                )
 
             # Candlestick and EMA lines (subplot 1)
             fig.add_trace(
                 go.Candlestick(x=date, open=open, high=high, low=low, close=close, name='주가',
-                               increasing_line_color='red',
-                                # Decreasing color for the line
-                                decreasing_line_color='blue',),
+                               #increasing_line_color='red',                                
+                               #decreasing_line_color='blue',
+                               ),
                 row=1, col=1
             )
             fig.add_trace(
@@ -120,7 +130,7 @@ class MacdStockStrategy(StockStrategy):
                 go.Scatter(x=date, y=ema200, line=dict(color='blue', width=1), name="ema200"),
                 row=1, col=1
             )
-
+            
             fig.add_trace(
                 go.Scatter(x=date, y=macd, line=dict(color='red', width=1), name='MACD'),
                 row=2, col=1
@@ -133,13 +143,18 @@ class MacdStockStrategy(StockStrategy):
                 go.Bar(x=date, y=macd_osi, name='MACD Hist'),
                 row=2, col=1
             )
-
+            now_price = sd.now_price()
+            now_time = sd.now_candle_time()
+            date_str = now_time.strftime("%Y-%m-%d")
+            title = "{0}[{1}], {2}일 종가:{3:,.2f}$".format(sd.name_, sd.ticker_, date_str, now_price)
             # Layout configuration
             fig.update_layout(
-                title=sd.name_,
-                xaxis_title='날짜',
+                title=title,
+                
+               # xaxis_title='날짜',
                 yaxis_title='가격',
-                xaxis_rangeslider_visible=False
+                xaxis_rangeslider_visible=False,
+                template='ggplot2',
             )
 
             # PNG 파일로 저장

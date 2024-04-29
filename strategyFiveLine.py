@@ -124,10 +124,10 @@ class FiveLineStockStrategy(StockStrategy):
             fig = go.Figure(
                 data=[
                     go.Candlestick(x=date, open=open, high=high, low=low, close=close,
-                                   # Increasing color for the line
-                                   increasing_line_color='red',
-                                   # Decreasing color for the line
-                                   decreasing_line_color='blue',
+                                #    # Increasing color for the line
+                                #    increasing_line_color='red',
+                                #    # Decreasing color for the line
+                                #    decreasing_line_color='blue',
                                    name = '주가'
                                   ),
                     
@@ -141,11 +141,16 @@ class FiveLineStockStrategy(StockStrategy):
                     go.Scatter(x=date, y=ema20, line=dict(color='blue', width=1), name="ema20"),                    
                 ]
             )
+            now_price = sd.now_price()
+            now_time = sd.now_candle_time()
+            date_str = now_time.strftime("%Y-%m-%d")
+            title = "{0}[{1}], {2}일 종가:{3:,.2f}$".format(sd.name_, sd.ticker_, date_str, now_price)
             fig.update_layout(
-                title=sd.name_,
+                title=title,
                 xaxis_title='날짜', 
                 yaxis_title='가격',
-                xaxis_rangeslider_visible=False
+                xaxis_rangeslider_visible=False,
+                template='ggplot2',
                 )
 
             # PNG 파일로 저장

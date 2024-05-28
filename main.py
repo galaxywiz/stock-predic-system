@@ -18,20 +18,20 @@ import config
 # 모니터닝용, 지금 보유용
 if __name__ == '__main__':
     market_list = []
-    test = False
+    test = True
     if test:
         # biancesMarket = stockMaket.StockMarket(
         #     config.BinanceStockMarketConfig(), real_trade=False)
-        config.USAStockMarketConfig.use_message_ = False
-        usaMarket = stockMaket.StockMarket(
-            config.USAStockMarketConfig(), real_trade=False)
-        # koreaMarket = stockMaket.StockMarket(
-        #     config.KoreaStockMarketConfig(), real_trade=False)
-        # taiwanMarket = stockMaket.StockMarket(
+        #config.USAStockMarketConfig.use_message_ = False
+        #usaMarket = stockMaket.StockMarket(
+        #    config.USAStockMarketConfig(), real_trade=False)
+        koreaMarket = stockMaket.StockMarket(
+            config.KoreaStockMarketConfig(), real_trade=False)
+        #taiwanMarket = stockMaket.StockMarket(
         #     config.TaiwanStockMarketConfig(), real_trade=False)
 
-        market_list.append(usaMarket)
-        # market_list.append(koreaMarket)
+        #market_list.append(usaMarket)
+        market_list.append(koreaMarket)
         # market_list.append(taiwanMarket)
     else:
         usaMarket = stockMaket.StockMarket(

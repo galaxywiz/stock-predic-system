@@ -10,7 +10,9 @@ import pandas as pd
 from pandas import DataFrame
 
 import urllib.request
+import requests
 from bs4 import BeautifulSoup
+
 import yfinance as yf
 import pyupbit
 import ccxt
@@ -185,6 +187,42 @@ class KoreaStockCrawler(StockCrawler):
             return self.get_korea_stock_data_from_naver(rowTicker, loadDays)
    
     def get_stock_list(self, limit, debug = False):
+        # 네이버 금융 사이트 URL
+        url = 'https://finance.naver.com/sise/item_gold.naver'
+
+        # 웹 페이지 가져오기
+        response = requests.get(url)
+        response.encoding = 'euc-kr'  # 한글 인코딩 설정
+        html = response.text
+
+        # BeautifulSoup으로 HTML 파싱
+        soup = BeautifulSoup(html, 'html.parser')
+        # 종목명을 저장할 리스트
+        stock_names = {}
+        ticker = []
+        sname = []
+        marketcap = []
+        ranks = []
+
+        items = soup.find_all('a', class_='tltle')
+        for item in items:
+            code = item['href'].split('=')[-1]
+            name = item.get_text()
+            ticker.append(code)
+            sname.append(name)    
+            marketcap.append(1)
+            ranks.append(1)
+
+        stock_names['ticker'] = ticker
+        stock_names['name'] = sname
+        stock_names['MarketCap'] = marketcap
+        stock_names['ranking'] = ranks
+        stock_names['having'] = ranks
+        # dictionary를 DataFrame으로 변환
+        df = pd.DataFrame(stock_names)
+        return df
+    
+    # def get_stock_list(self, limit, debug = False):
         # 한국 주식 회사 등록 정보 가지고 오기
         try:
             stockDf = pd.read_html('http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13', header=0)[0]

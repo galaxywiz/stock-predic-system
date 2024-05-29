@@ -18,7 +18,7 @@ import config
 # 모니터닝용, 지금 보유용
 if __name__ == '__main__':
     market_list = []
-    test = True
+    test = False
     if test:
         # biancesMarket = stockMaket.StockMarket(
         #     config.BinanceStockMarketConfig(), real_trade=False)

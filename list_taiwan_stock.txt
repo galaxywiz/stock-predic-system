@@ -1,7 +1,7 @@
 上市:^TWII:0:0
 TSMC:2330:10:0
 HONHAI:2317:11:0
-CTBC:2891:0
+CTBC:2891:11:0
 MEDIATEK:2454:12:0
 CHUNGHWA_TELECOM:2412:20:0
 FORMOSA_PETROCHEMICAL:6505:21:0
@@ -28,6 +28,6 @@ CHINA_AIR:2610:51:0
 Yuanta_US_20+_Year_Bond:ETF00720B:200:0
 CTBC_Banking_Senior_10+_Year_Bond_ETF:00773B:201:0
 Cathay_US_Corporate_10+_Years_Banking ETF:00933B:202:0
-YuantaHighDividedLowVolatilityETF:0056:0
-Fubon_Taiwan_HighDivided_ETF:006208
-CathaTaiwanSelectHighDividedETF:00701:0
+YuantaHighDividedLowVolatilityETF:0056:203:0
+Fubon_Taiwan_HighDivided_ETF:006208:204:0
+CathaTaiwanSelectHighDividedETF:00701:0:205:0

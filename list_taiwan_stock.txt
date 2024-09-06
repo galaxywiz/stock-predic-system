@@ -16,3 +16,8 @@ Fubon_Taiwan_HighDivided_ETF:006208:201:0
 CathaTaiwanSelectHighDividedETF:00701:202:0
 FH_Dividend_ETF:00888:203:0
 Yuanta_Taiwan_Dividend_Plus_ETF:00850:204:0
+FH_AI_Robotics_ETF_:00762:205:0
+Yuanta_AI_Robotics_ETF_:00757:206:0
+Cathay_AI_Innovation_ETF_:00901:207:0
+Fubon_Future_AI_ETF_:00770:208:0
+Yuanta_AI_Revolution_ETF_:00881:209:0

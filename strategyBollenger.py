@@ -65,60 +65,42 @@ class BollengerStockStrategy(StockStrategy):
         middle = df['Middle']
         lower = df['Lower']
 
-        if False:
-            df.set_index('date', inplace=True)
-            mpl.rcParams['font.family'] = 'Malgun Gothic'  # 예: 'Malgun Gothic', 'AppleGothic' 등
-            # 볼린저  밴드를 추가 지표로 설정
-            add_plot = [
-                mpf.make_addplot(upper, color='red', ylabel='Upper'),
-                mpf.make_addplot(middle, color='black', ylabel='Middle'),
-                mpf.make_addplot(lower, color='blue', ylabel='Lower')
-            ]
-            
-            # 캔들스틱 차트와 볼린저 밴드 플롯
-            mpf.plot(df, type='candle', addplot=add_plot, 
-                    figratio=(20, 10),  # figratio를 사용하여 차트의 비율을 조절합니다.
-                    style='charles',
-                    title='{0} Stock Price'.format(sd.name_), 
-                    datetime_format='%Y-%m-%d',
-                    savefig=self.chart_path_)
-        else:
             # 차트 데이터 준비
-            date = df['date']
-            open = df['open']
-            high = df['high']
-            low = df['low']
-            close = df['close']
+        date = df['date']
+        open = df['open']
+        high = df['high']
+        low = df['low']
+        close = df['close']
 
-            # 차트 생성
-            fig = go.Figure(
-                data=[
-                    go.Candlestick(x=date, open=open, high=high, low=low, close=close,
-                                   # Increasing color for the line
-                                #    increasing_line_color='red',
-                                #    # Decreasing color for the line
-                                #    decreasing_line_color='blue',
-                                   name = '주가'
-                                  ),
-                    go.Scatter(x=date, y=upper, line=dict(color='red', width=1), name="상단 밴드"),
-                    go.Scatter(x=date, y=middle, line=dict(color='gray', width=1), name="중간선"),
-                    go.Scatter(x=date, y=lower, line=dict(color='blue', width=1), name="하단 밴드"),
-                ]
+        # 차트 생성
+        fig = go.Figure(
+            data=[
+                go.Candlestick(x=date, open=open, high=high, low=low, close=close,
+                               # Increasing color for the line
+                            #    increasing_line_color='red',
+                            #    # Decreasing color for the line
+                            #    decreasing_line_color='blue',
+                               name = '주가'
+                              ),
+                go.Scatter(x=date, y=upper, line=dict(color='red', width=1), name="상단 밴드"),
+                go.Scatter(x=date, y=middle, line=dict(color='gray', width=1), name="중간선"),
+                go.Scatter(x=date, y=lower, line=dict(color='blue', width=1), name="하단 밴드"),
+            ]
+        )
+        now_price = sd.now_price()
+        now_time = sd.now_candle_time()
+        date_str = now_time.strftime("%Y-%m-%d")
+        title = "{0}[{1}], {2}일 종가:{3:,.2f}$".format(sd.name_, sd.ticker_, date_str, now_price)
+        fig.update_layout(
+            title=title,
+            xaxis_title='날짜', 
+            yaxis_title='가격',
+            xaxis_rangeslider_visible=False,
+            template='ggplot2',
             )
-            now_price = sd.now_price()
-            now_time = sd.now_candle_time()
-            date_str = now_time.strftime("%Y-%m-%d")
-            title = "{0}[{1}], {2}일 종가:{3:,.2f}$".format(sd.name_, sd.ticker_, date_str, now_price)
-            fig.update_layout(
-                title=title,
-                xaxis_title='날짜', 
-                yaxis_title='가격',
-                xaxis_rangeslider_visible=False,
-                template='ggplot2',
-                )
 
-            # PNG 파일로 저장
-            fig.write_image(self.chart_path_)
+        # PNG 파일로 저장
+        fig.write_image(self.chart_path_)
 
         print("$ 차트 갱신 [%s] => [%s]" % (sd.name_, self.chart_path_))
         

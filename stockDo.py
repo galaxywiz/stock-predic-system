@@ -8,6 +8,7 @@ import util as u
 from strategyFiveLine import FiveLineStockStrategy
 from strategyBollenger import BollengerStockStrategy
 from strategyMACD import MacdStockStrategy
+from strategyKDJ import KdjStockStrategy
 
 class StockDo:
     def __init__(self, stock_market):
@@ -66,7 +67,12 @@ class PredicStockDo(StockDo):
 # 전략을 로딩, 조합해서 필터링 하는 역활
 # 5선화음, 이평선등 기본만 구현해보기
 class StrategyStockDo(PredicStockDo):
-    strategy_ = [MacdStockStrategy, BollengerStockStrategy, FiveLineStockStrategy]
+    strategy_ = [
+        KdjStockStrategy,
+        MacdStockStrategy,
+        BollengerStockStrategy,
+        FiveLineStockStrategy,        
+        ]
     trading_history_ = []
     bid_signal_ = []
     ask_signal_ = []

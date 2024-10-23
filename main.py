@@ -23,16 +23,20 @@ if __name__ == '__main__':
         # biancesMarket = stockMaket.StockMarket(
         #     config.BinanceStockMarketConfig(), real_trade=False)
         #config.USAStockMarketConfig.use_message_ = False
-        #usaMarket = stockMaket.StockMarket(
-        #    config.USAStockMarketConfig(), real_trade=False)
-        koreaMarket = stockMaket.StockMarket(
-            config.KoreaStockMarketConfig(), real_trade=False)
+        usaMarket = stockMaket.StockMarket(
+            config.USAStockMarketConfig(), real_trade=False)
+        #koreaMarket = stockMaket.StockMarket(
+        #    config.KoreaStockMarketConfig(), real_trade=False)
         #taiwanMarket = stockMaket.StockMarket(
         #     config.TaiwanStockMarketConfig(), real_trade=False)
 
-        #market_list.append(usaMarket)
-        market_list.append(koreaMarket)
+        market_list.append(usaMarket)
+        # market_list.append(koreaMarket)
         # market_list.append(taiwanMarket)
+        
+        for market in market_list:
+            market.check_strategy()
+        #   market.predic_stock()
     else:
         usaMarket = stockMaket.StockMarket(
             config.USAStockMarketConfig(), real_trade=False)
@@ -45,11 +49,6 @@ if __name__ == '__main__':
         market_list.append(koreaMarket)
         market_list.append(taiwanMarket)
 
-    if test:
-        for market in market_list:
-            market.check_strategy()
-        #   market.predic_stock()
-    else:  
         while(True):
             for market in market_list:
                 market.do()

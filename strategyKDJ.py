@@ -113,7 +113,7 @@ class KdjStockStrategy(StockStrategy):
             row=2, col=1
         )
         fig.add_trace(
-            go.Scatter(x=date, y=j, line=dict(color='green', width=1), name='J'),
+            go.Scatter(x=date, y=j, line=dict(color='green', width=2), name='J'),
             row=2, col=1
         )
 
@@ -122,6 +122,9 @@ class KdjStockStrategy(StockStrategy):
         date_str = now_time.strftime("%Y-%m-%d")
         title = "{0}[{1}], {2}일 종가:{3:,.2f}$".format(sd.name_, sd.ticker_, date_str, now_price)
         
+        # KDJ의 Y축 범위 설정 (0~100)
+        fig.update_yaxes(range=[-150, 150], row=2, col=1)
+
         # Layout configuration
         fig.update_layout(
             title=title,
@@ -130,7 +133,8 @@ class KdjStockStrategy(StockStrategy):
             template='ggplot2',
         )
 
+   #     fig.show()
         # PNG 파일로 저장
-    #    fig.write_image(self.chart_path_)
+        fig.write_image(self.chart_path_)
 
         print("$ 차트 갱신 [%s] => [%s]" % (sd.name_, self.chart_path_))

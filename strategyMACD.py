@@ -115,10 +115,12 @@ class MacdStockStrategy(StockStrategy):
             go.Bar(x=date, y=macd_osi, name='MACD Hist'),
             row=2, col=1
         )
+
         now_price = sd.now_price()
         now_time = sd.now_candle_time()
         date_str = now_time.strftime("%Y-%m-%d")
         title = "{0}[{1}], {2}일 종가:{3:,.2f}$".format(sd.name_, sd.ticker_, date_str, now_price)
+       
         # Layout configuration
         fig.update_layout(
             title=title,

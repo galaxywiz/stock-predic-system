@@ -68,8 +68,8 @@ class PredicStockDo(StockDo):
 # 5선화음, 이평선등 기본만 구현해보기
 class StrategyStockDo(PredicStockDo):
     strategy_ = [
-        KdjStockStrategy,
         MacdStockStrategy,
+        KdjStockStrategy,
         BollengerStockStrategy,
         FiveLineStockStrategy,        
         ]
